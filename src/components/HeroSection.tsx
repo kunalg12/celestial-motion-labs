@@ -1,8 +1,7 @@
-import { motion, useScroll, useTransform, useSpring, MotionValue } from 'framer-motion';
-import { useRef, useEffect } from 'react';
-import { ArrowDown } from 'lucide-react';
+import { motion, useScroll, useSpring, MotionValue } from 'framer-motion';
+import { useRef } from 'react';
 import OrbitalRings from './OrbitalRings';
-import Planet from './Planet';
+import Planet3D from './Planet3D';
 
 interface HeroSectionProps {
   mouseX: MotionValue<number>;
@@ -63,9 +62,8 @@ const HeroSection = ({ mouseX, mouseY }: HeroSectionProps) => {
       {/* Orbital Rings - pass mouse motion values for parallax */}
       <OrbitalRings mouseX={mouseX} mouseY={mouseY} />
 
-      {/* Planet - Celestial Sphere */}
-      <Planet 
-        scrollProgress={smoothProgress}
+      {/* 3D Planet - Interactive Celestial Sphere */}
+      <Planet3D 
         mouseX={mouseX}
         mouseY={mouseY}
       />
