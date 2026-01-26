@@ -30,18 +30,26 @@ const CTASection = () => {
   const ring2Scale = useSpring(isHovered ? 1.15 : 1, { stiffness: 150, damping: 20 });
   const ring3Scale = useSpring(isHovered ? 1.2 : 1, { stiffness: 100, damping: 20 });
 
+  const ring1X = useTransform(springX, (v) => v * 0.5);
+  const ring1Y = useTransform(springY, (v) => v * 0.5);
+  const ring2X = useTransform(springX, (v) => v * 0.3);
+  const ring2Y = useTransform(springY, (v) => v * 0.3);
+  const ring3X = useTransform(springX, (v) => v * 0.2);
+  const ring3Y = useTransform(springY, (v) => v * 0.2);
+  const glowX = useTransform(springX, (v) => v * 2);
+  const glowY = useTransform(springY, (v) => v * 2);
+
   return (
     <section 
       id="contact" 
-      className="relative py-32 overflow-hidden"
+      className="relative py-32"
       onMouseMove={handleMouseMove}
       onMouseLeave={() => { mouseX.set(0); mouseY.set(0); }}
     >
-      {/* Darker background overlay */}
-      <div className="absolute inset-0" style={{ background: 'linear-gradient(180deg, hsl(228 84% 4%) 0%, hsl(224 71% 3%) 50%, hsl(228 84% 4%) 100%)' }} />
       
       {/* Interactive orbital rings that respond to CTA hover */}
       <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 pointer-events-none">
+        {/* Ring 1 - Innermost */}
         <motion.div
           className="absolute rounded-full border border-primary/10"
           style={{
@@ -50,12 +58,26 @@ const CTASection = () => {
             left: -150,
             top: -150,
             scale: ring1Scale,
-            x: useTransform(springX, (v) => v * 0.5),
-            y: useTransform(springY, (v) => v * 0.5),
+            x: ring1X,
+            y: ring1Y,
           }}
           animate={{ rotate: 360 }}
           transition={{ duration: 60, repeat: Infinity, ease: 'linear' }}
-        />
+        >
+          {/* Orbiting particle on ring 1 */}
+          <motion.div
+            className="absolute w-1.5 h-1.5 rounded-full bg-primary/60"
+            style={{
+              top: 0,
+              left: '50%',
+              marginLeft: -3,
+              transformOrigin: '3px 150px',
+              boxShadow: '0 0 8px hsla(199, 89%, 60%, 0.8)',
+            }}
+          />
+        </motion.div>
+
+        {/* Ring 2 - Middle */}
         <motion.div
           className="absolute rounded-full border border-primary/8"
           style={{
@@ -64,12 +86,26 @@ const CTASection = () => {
             left: -225,
             top: -225,
             scale: ring2Scale,
-            x: useTransform(springX, (v) => v * 0.3),
-            y: useTransform(springY, (v) => v * 0.3),
+            x: ring2X,
+            y: ring2Y,
           }}
           animate={{ rotate: -360 }}
           transition={{ duration: 80, repeat: Infinity, ease: 'linear' }}
-        />
+        >
+          {/* Orbiting particle on ring 2 */}
+          <motion.div
+            className="absolute w-1.5 h-1.5 rounded-full bg-primary/50"
+            style={{
+              top: 0,
+              left: '50%',
+              marginLeft: -3,
+              transformOrigin: '3px 225px',
+              boxShadow: '0 0 8px hsla(199, 89%, 60%, 0.6)',
+            }}
+          />
+        </motion.div>
+
+        {/* Ring 3 - Outermost */}
         <motion.div
           className="absolute rounded-full border border-primary/5"
           style={{
@@ -78,12 +114,24 @@ const CTASection = () => {
             left: -300,
             top: -300,
             scale: ring3Scale,
-            x: useTransform(springX, (v) => v * 0.2),
-            y: useTransform(springY, (v) => v * 0.2),
+            x: ring3X,
+            y: ring3Y,
           }}
           animate={{ rotate: 360 }}
           transition={{ duration: 100, repeat: Infinity, ease: 'linear' }}
-        />
+        >
+          {/* Orbiting particle on ring 3 */}
+          <motion.div
+            className="absolute w-1.5 h-1.5 rounded-full bg-primary/40"
+            style={{
+              top: 0,
+              left: '50%',
+              marginLeft: -3,
+              transformOrigin: '3px 300px',
+              boxShadow: '0 0 8px hsla(199, 89%, 60%, 0.4)',
+            }}
+          />
+        </motion.div>
       </div>
 
       {/* Dynamic glow that follows mouse and intensifies on hover */}
@@ -92,9 +140,9 @@ const CTASection = () => {
         style={{
           width: 600,
           height: 600,
-          x: useTransform(springX, (v) => v * 2),
-          y: useTransform(springY, (v) => v * 2),
-          background: `radial-gradient(circle, hsla(199, 89%, 48%, ${glowOpacity.get()}) 0%, transparent 60%)`,
+          x: glowX,
+          y: glowY,
+          background: `radial-gradient(circle, hsla(199, 89%, 48%, 0.3) 0%, transparent 60%)`,
         }}
       />
 
@@ -130,15 +178,16 @@ const CTASection = () => {
               <Sparkles className="w-5 h-5 text-primary-foreground" />
             </motion.div>
             
-            {/* Orbiting particle */}
+            {/* Orbiting particle around the outer ring */}
             <motion.div
               className="absolute w-2 h-2 rounded-full bg-star-glow"
               animate={{ rotate: 360 }}
               transition={{ duration: 3, repeat: Infinity, ease: 'linear' }}
               style={{
-                top: '50%',
+                top: 0,
                 left: '50%',
-                transformOrigin: '0 -25px',
+                marginLeft: -4, // Half of particle width to center it
+                transformOrigin: '4px 40px', // Center of particle (4px) to center of container (40px = half of 80px)
                 boxShadow: '0 0 10px hsla(199, 89%, 65%, 0.6)',
               }}
             />

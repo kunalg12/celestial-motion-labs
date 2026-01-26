@@ -1,153 +1,74 @@
-import { motion, useScroll, useTransform, useSpring, useMotionValue } from 'framer-motion';
-import { useRef, useEffect, useState } from 'react';
+import { motion, useScroll, useTransform, useSpring, MotionValue } from 'framer-motion';
+import { useRef, useEffect } from 'react';
 import { ArrowDown } from 'lucide-react';
-import planetImage from '@/assets/planet-hero.jpg';
 import OrbitalRings from './OrbitalRings';
+import Planet from './Planet';
 
-const HeroSection = () => {
+interface HeroSectionProps {
+  mouseX: MotionValue<number>;
+  mouseY: MotionValue<number>;
+}
+
+const HeroSection = ({ mouseX, mouseY }: HeroSectionProps) => {
   const containerRef = useRef<HTMLDivElement>(null);
-  const [mousePosition, setMousePosition] = useState({ x: 0, y: 0 });
   
   const { scrollYProgress } = useScroll({
     target: containerRef,
     offset: ['start start', 'end start'],
   });
 
-  // Smooth spring animations for scroll
-  const smoothProgress = useSpring(scrollYProgress, { stiffness: 100, damping: 30 });
+  // Smooth spring animations for scroll - softer physics for less jitter
+  const smoothProgress = useSpring(scrollYProgress, { stiffness: 60, damping: 20, mass: 0.5 });
   
-  const planetY = useTransform(smoothProgress, [0, 1], [0, 300]);
-  const planetScale = useTransform(smoothProgress, [0, 1], [1, 0.7]);
-  const planetOpacity = useTransform(smoothProgress, [0, 0.6], [1, 0.2]);
-  const planetRotation = useMotionValue(0);
 
-  // Mouse parallax
-  const mouseX = useSpring(useMotionValue(0), { stiffness: 50, damping: 20 });
-  const mouseY = useSpring(useMotionValue(0), { stiffness: 50, damping: 20 });
 
-  useEffect(() => {
-    const handleMouseMove = (e: MouseEvent) => {
-      const x = (e.clientX / window.innerWidth - 0.5) * 2;
-      const y = (e.clientY / window.innerHeight - 0.5) * 2;
-      setMousePosition({ x, y });
-      mouseX.set(x);
-      mouseY.set(y);
-    };
+  // Scroll-based parallax and effects
 
-    window.addEventListener('mousemove', handleMouseMove);
-    return () => window.removeEventListener('mousemove', handleMouseMove);
-  }, [mouseX, mouseY]);
 
-  // Continuous planet rotation
-  useEffect(() => {
-    let startTime = Date.now();
-    const animate = () => {
-      const elapsed = Date.now() - startTime;
-      // Very slow rotation: 360 degrees per 5 minutes
-      planetRotation.set((elapsed / 1000) * 1.2);
-      requestAnimationFrame(animate);
-    };
-    const id = requestAnimationFrame(animate);
-    return () => cancelAnimationFrame(id);
-  }, [planetRotation]);
 
   const textVariants = {
-    hidden: { opacity: 0, y: 60 },
+    hidden: { opacity: 0, y: 60, scale: 0.95 },
     visible: (i: number) => ({
       opacity: 1,
       y: 0,
+      scale: 1,
       transition: {
-        duration: 1,
-        delay: 0.3 + i * 0.15,
-        ease: [0.25, 0.46, 0.45, 0.94],
+        duration: 1.4,
+        delay: 0.6 + i * 0.25,
+        ease: [0.16, 1, 0.3, 1], // More dramatic easing
       },
     }),
   };
 
-  const planetParallaxX = useTransform(mouseX, [-1, 1], [-30, 30]);
-  const planetParallaxY = useTransform(mouseY, [-1, 1], [-20, 20]);
+
 
   return (
     <section
       ref={containerRef}
-      className="relative min-h-screen flex items-center justify-center overflow-hidden"
+      className="relative min-h-screen flex items-center justify-center"
     >
-      {/* Deep space radial gradient */}
+
+      {/* Deep space radial gradient overlay */}
       <div 
         className="absolute inset-0 pointer-events-none"
         style={{
           background: `
-            radial-gradient(ellipse 80% 60% at 60% 50%, hsla(199, 89%, 48%, 0.08) 0%, transparent 50%),
-            radial-gradient(ellipse 60% 40% at 70% 60%, hsla(263, 70%, 50%, 0.05) 0%, transparent 40%)
+            radial-gradient(ellipse 80% 60% at 60% 50%, hsla(199, 89%, 48%, 0.12) 0%, transparent 50%),
+            radial-gradient(ellipse 60% 40% at 70% 60%, hsla(263, 70%, 50%, 0.08) 0%, transparent 40%)
           `,
+          willChange: 'transform', // Hardware acceleration hint
         }}
       />
       
-      {/* Orbital Rings - pass mouse position for parallax */}
-      <OrbitalRings mouseX={mousePosition.x} mouseY={mousePosition.y} />
+      {/* Orbital Rings - pass mouse motion values for parallax */}
+      <OrbitalRings mouseX={mouseX} mouseY={mouseY} />
 
-      {/* Planet - positioned to bleed outside viewport */}
-      <motion.div
-        className="absolute pointer-events-none"
-        style={{ 
-          right: '-15%',
-          top: '50%',
-          width: 'clamp(500px, 70vw, 1000px)',
-          aspectRatio: '1',
-          translateY: '-45%',
-          y: planetY,
-          scale: planetScale,
-          opacity: planetOpacity,
-          x: planetParallaxX,
-        }}
-      >
-        <motion.div
-          className="relative w-full h-full"
-          style={{
-            rotate: planetRotation,
-            y: planetParallaxY,
-          }}
-        >
-          {/* Atmospheric glow layers */}
-          <div 
-            className="absolute inset-0 rounded-full"
-            style={{
-              background: 'radial-gradient(circle at 30% 30%, hsla(199, 89%, 60%, 0.2) 0%, transparent 50%)',
-              filter: 'blur(40px)',
-              transform: 'scale(1.3)',
-            }}
-          />
-          <div 
-            className="absolute inset-0 rounded-full"
-            style={{
-              background: 'radial-gradient(circle at 70% 70%, hsla(199, 89%, 48%, 0.15) 0%, transparent 60%)',
-              filter: 'blur(60px)',
-              transform: 'scale(1.4)',
-            }}
-          />
-          
-          {/* Planet image */}
-          <img
-            src={planetImage}
-            alt=""
-            className="w-full h-full object-contain"
-            style={{
-              filter: 'drop-shadow(0 0 80px hsla(199, 89%, 48%, 0.3))',
-              maskImage: 'radial-gradient(circle, black 40%, transparent 70%)',
-              WebkitMaskImage: 'radial-gradient(circle, black 40%, transparent 70%)',
-            }}
-          />
-          
-          {/* Rim light effect */}
-          <div 
-            className="absolute inset-0 rounded-full"
-            style={{
-              background: 'conic-gradient(from 120deg, transparent 0deg, hsla(199, 89%, 70%, 0.3) 60deg, transparent 120deg)',
-              filter: 'blur(20px)',
-            }}
-          />
-        </motion.div>
-      </motion.div>
+      {/* Planet - Celestial Sphere */}
+      <Planet 
+        scrollProgress={smoothProgress}
+        mouseX={mouseX}
+        mouseY={mouseY}
+      />
 
       {/* Content */}
       <div className="relative z-10 container mx-auto px-6 py-32">
@@ -236,32 +157,6 @@ const HeroSection = () => {
         </div>
       </div>
 
-      {/* Scroll Indicator */}
-      <motion.div
-        className="absolute bottom-8 left-1/2 -translate-x-1/2 flex flex-col items-center gap-2"
-        initial={{ opacity: 0, y: 20 }}
-        animate={{ opacity: 1, y: 0 }}
-        transition={{ delay: 1.5, duration: 0.8 }}
-      >
-        <motion.span 
-          className="text-xs text-muted-foreground uppercase tracking-[0.2em]"
-          animate={{ opacity: [0.5, 1, 0.5] }}
-          transition={{ duration: 2, repeat: Infinity }}
-        >
-          Scroll to Explore
-        </motion.span>
-        <motion.div
-          animate={{ y: [0, 8, 0] }}
-          transition={{ duration: 1.5, repeat: Infinity, ease: 'easeInOut' }}
-          className="w-6 h-10 rounded-full border border-primary/30 flex items-start justify-center p-2"
-        >
-          <motion.div
-            className="w-1 h-2 rounded-full bg-primary"
-            animate={{ y: [0, 12, 0], opacity: [1, 0.3, 1] }}
-            transition={{ duration: 1.5, repeat: Infinity, ease: 'easeInOut' }}
-          />
-        </motion.div>
-      </motion.div>
     </section>
   );
 };

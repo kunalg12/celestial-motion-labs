@@ -18,7 +18,7 @@ const Footer = () => {
   ];
 
   return (
-    <footer className="relative py-20 border-t border-border/50">
+    <footer className="relative py-20">
       {/* Subtle orbital grid background */}
       <div className="absolute inset-0 opacity-5 pointer-events-none">
         <svg width="100%" height="100%" className="absolute inset-0">
@@ -82,8 +82,6 @@ const Footer = () => {
           ))}
         </div>
 
-        {/* Divider */}
-        <div className="cosmic-divider mb-8" />
 
         {/* Bottom Row */}
         <div className="flex flex-col md:flex-row justify-between items-center gap-4 text-sm text-muted-foreground">

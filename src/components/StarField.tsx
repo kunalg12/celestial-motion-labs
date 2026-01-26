@@ -1,4 +1,10 @@
-import { useEffect, useRef, useMemo } from 'react';
+import { useRef, useEffect, useMemo } from 'react';
+import { motion, MotionValue } from 'framer-motion';
+
+interface StarFieldProps {
+  mouseX?: MotionValue<number>;
+  mouseY?: MotionValue<number>;
+}
 
 interface Star {
   x: number;
@@ -11,9 +17,8 @@ interface Star {
   twinkleOffset: number;
 }
 
-const StarField = () => {
+const StarField = ({ mouseX, mouseY }: StarFieldProps) => {
   const canvasRef = useRef<HTMLCanvasElement>(null);
-  const mouseRef = useRef({ x: 0, y: 0 });
   const starsRef = useRef<Star[]>([]);
 
   const starLayers = useMemo(() => ({
@@ -63,14 +68,6 @@ const StarField = () => {
       twinkleOffset: Math.random() * Math.PI * 2,
     });
 
-    const handleMouseMove = (e: MouseEvent) => {
-      mouseRef.current = {
-        x: (e.clientX / window.innerWidth - 0.5) * 2,
-        y: (e.clientY / window.innerHeight - 0.5) * 2,
-      };
-    };
-
-    window.addEventListener('mousemove', handleMouseMove);
     resizeCanvas();
     window.addEventListener('resize', resizeCanvas);
 
@@ -92,8 +89,8 @@ const StarField = () => {
       starsRef.current.forEach((star) => {
         // Parallax offset based on mouse position
         const parallax = parallaxFactors[star.layer];
-        const offsetX = mouseRef.current.x * parallax * 100;
-        const offsetY = mouseRef.current.y * parallax * 100;
+        const offsetX = (mouseX?.get() ?? 0) * parallax * 100;
+        const offsetY = (mouseY?.get() ?? 0) * parallax * 100;
 
         // Twinkle effect
         const twinkle = Math.sin(currentTime * 0.001 * star.twinkleSpeed + star.twinkleOffset);
@@ -176,10 +173,9 @@ const StarField = () => {
 
     return () => {
       window.removeEventListener('resize', resizeCanvas);
-      window.removeEventListener('mousemove', handleMouseMove);
       cancelAnimationFrame(animationId);
     };
-  }, [starLayers]);
+  }, [starLayers, mouseX, mouseY]);
 
   return (
     <canvas

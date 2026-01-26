@@ -8,21 +8,18 @@ const testimonials = [
     content: "Orbitix transformed our digital presence entirely. Their attention to detail and innovative approach exceeded every expectation we had.",
     author: "Sarah Chen",
     role: "CEO, TechNova",
-    avatar: "https://images.unsplash.com/photo-1494790108377-be9c29b29330?w=100&auto=format",
   },
   {
     id: 2,
     content: "Working with this team felt like having an extension of our own company. They truly understood our vision and brought it to life.",
     author: "Marcus Thompson",
     role: "Founder, Quantumleap",
-    avatar: "https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=100&auto=format",
   },
   {
     id: 3,
     content: "The results speak for themselves—a 300% increase in user engagement and a brand identity that sets us apart in our industry.",
     author: "Elena Rodriguez",
     role: "CMO, Stellar Health",
-    avatar: "https://images.unsplash.com/photo-1438761681033-6461ffad8d80?w=100&auto=format",
   },
 ];
 
@@ -59,7 +56,7 @@ const TestimonialsSection = () => {
   };
 
   return (
-    <section className="relative py-32 overflow-hidden">
+    <section className="relative py-32">
       <div ref={containerRef} className="container mx-auto px-6">
         <motion.div
           initial={{ opacity: 0, y: 40 }}
@@ -146,15 +143,15 @@ const TestimonialsSection = () => {
 
               {/* Author */}
               <div className="flex items-center gap-4 relative">
-                <motion.img
-                  src={testimonial.avatar}
-                  alt={testimonial.author}
-                  className="w-12 h-12 rounded-full object-cover"
+                <div 
+                  className="w-12 h-12 rounded-full flex items-center justify-center text-primary font-bold text-lg"
                   style={{
+                    background: 'hsla(199, 89%, 48%, 0.1)',
                     border: '2px solid hsla(199, 89%, 48%, 0.3)',
                   }}
-                  whileHover={{ scale: 1.1 }}
-                />
+                >
+                  {testimonial.author.charAt(0)}
+                </div>
                 <div>
                   <div className="font-semibold text-foreground">{testimonial.author}</div>
                   <div className="text-sm text-muted-foreground">{testimonial.role}</div>

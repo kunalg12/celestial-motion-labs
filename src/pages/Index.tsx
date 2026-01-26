@@ -1,3 +1,5 @@
+import { useMotionValue, useSpring } from 'framer-motion';
+import { useEffect } from 'react';
 import StarField from '@/components/StarField';
 import Navbar from '@/components/Navbar';
 import HeroSection from '@/components/HeroSection';
@@ -9,32 +11,38 @@ import CTASection from '@/components/CTASection';
 import Footer from '@/components/Footer';
 
 const Index = () => {
+  // Mouse parallax motion values lifted to top level for continuity
+  const mouseX = useSpring(useMotionValue(0), { stiffness: 50, damping: 20 });
+  const mouseY = useSpring(useMotionValue(0), { stiffness: 50, damping: 20 });
+
+  useEffect(() => {
+    const handleMouseMove = (e: MouseEvent) => {
+      const x = (e.clientX / window.innerWidth - 0.5) * 2;
+      const y = (e.clientY / window.innerHeight - 0.5) * 2;
+      mouseX.set(x);
+      mouseY.set(y);
+    };
+
+    window.addEventListener('mousemove', handleMouseMove);
+    return () => window.removeEventListener('mousemove', handleMouseMove);
+  }, [mouseX, mouseY]);
+
   return (
     <div className="min-h-screen bg-background text-foreground overflow-x-hidden">
-      {/* Star Field Background */}
-      <StarField />
+      {/* Star Field Background - Lifted for continuity */}
+      <StarField mouseX={mouseX} mouseY={mouseY} />
       
       {/* Navbar */}
       <Navbar />
       
-      {/* Hero Section */}
-      <HeroSection />
-      
-      {/* Cosmic Divider */}
-      <div className="container mx-auto px-6">
-        <div className="cosmic-divider" />
-      </div>
+      {/* Hero Section - Accepts motion values for synchronized parallax */}
+      <HeroSection mouseX={mouseX} mouseY={mouseY} />
       
       {/* Services Section */}
       <ServicesSection />
       
       {/* Projects Section */}
       <ProjectsSection />
-      
-      {/* Cosmic Divider */}
-      <div className="container mx-auto px-6">
-        <div className="cosmic-divider" />
-      </div>
       
       {/* About Section */}
       <AboutSection />

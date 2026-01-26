@@ -64,7 +64,7 @@ const AboutSection = () => {
   };
 
   return (
-    <section id="about" className="relative py-32 overflow-hidden">
+    <section id="about" className="relative py-32">
       {/* Concentric Rings Background */}
       <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 pointer-events-none">
         {[1, 2, 3, 4, 5].map((i) => (

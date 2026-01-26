@@ -1,31 +1,40 @@
 import { motion, useInView } from 'framer-motion';
 import { useRef, useState } from 'react';
 import { ArrowUpRight } from 'lucide-react';
+import svsImage from '@/assets/svs-nursing.png';
+import chaitanyaImage from '@/assets/chaitanya-nursing.png';
+import santEknathImage from '@/assets/sant-eknath.png';
 
 const projects = [
   {
     id: 1,
-    title: 'Stellar Finance',
-    category: 'Fintech Platform',
-    description: 'A revolutionary banking experience for the modern era',
-    image: 'https://images.unsplash.com/photo-1551288049-bebda4e38f71?w=800&auto=format',
-    color: 'from-blue-500/20 to-cyan-500/20',
+    title: 'Chaitanya Nursing School',
+    category: 'Institutional Portal',
+    description: 'Empowering future healthcare leaders with excellence in nursing education and modern facilities.',
+    image: chaitanyaImage,
+    color: 'from-emerald-600/40 to-teal-400/40',
+    glow: 'hsla(168, 80%, 40%, 0.3)',
+    link: 'https://www.cnsgnmnursing.org/',
   },
   {
     id: 2,
-    title: 'NeoVerse',
-    category: 'Metaverse Experience',
-    description: 'Immersive virtual worlds for enterprise collaboration',
-    image: 'https://images.unsplash.com/photo-1639762681485-074b7f938ba0?w=800&auto=format',
-    color: 'from-purple-500/20 to-pink-500/20',
+    title: 'Sant Eknath Institute',
+    category: 'Nursing Education',
+    description: 'Excellence in nursing education with INC approval and industry-leading clinical training.',
+    image: santEknathImage,
+    color: 'from-orange-600/40 to-rose-400/40',
+    glow: 'hsla(12, 80%, 40%, 0.3)',
+    link: 'https://www.seinursing.org/',
   },
   {
     id: 3,
-    title: 'Quantum Labs',
-    category: 'AI Research',
-    description: 'Next-generation AI tools for scientific discovery',
-    image: 'https://images.unsplash.com/photo-1635070041078-e363dbe005cb?w=800&auto=format',
-    color: 'from-emerald-500/20 to-teal-500/20',
+    title: 'Swami Vivekanand Nursing',
+    category: 'Nursing Education Platform',
+    description: 'A premier institute for GNM nursing education, shaping the future of healthcare professionals.',
+    image: svsImage,
+    color: 'from-blue-600/40 to-indigo-400/40',
+    glow: 'hsla(199, 89%, 48%, 0.3)',
+    link: 'https://svsnursing.org/',
   },
 ];
 
@@ -64,7 +73,7 @@ const ProjectsSection = () => {
   };
 
   return (
-    <section id="work" className="relative py-32 overflow-hidden">
+    <section id="work" className="relative py-32">
       <div ref={containerRef} className="container mx-auto px-6">
         <motion.div
           initial={{ opacity: 0, y: 40 }}
@@ -126,26 +135,43 @@ const ProjectsSection = () => {
               whileHover={{ scale: 1.01 }}
               transition={{ duration: 0.4 }}
             >
-              {/* Background Image */}
+              {/* Background Decoration */}
               <div className="absolute inset-0">
                 <motion.img
                   src={project.image}
                   alt={project.title}
-                  className="w-full h-full object-cover"
+                  className="w-full h-full object-cover opacity-80 group-hover:opacity-100 transition-opacity duration-700"
                   animate={{ 
-                    scale: hoveredId === project.id ? 1.08 : 1,
+                    scale: hoveredId === project.id ? 1.05 : 1,
                   }}
                   transition={{ duration: 0.7, ease: [0.25, 0.46, 0.45, 0.94] }}
                 />
-                <div className={`absolute inset-0 bg-gradient-to-t ${project.color} opacity-60`} />
+                <div className={`absolute inset-0 bg-gradient-to-t ${project.color} opacity-90 group-hover:opacity-80 transition-opacity duration-500`} />
+                
+                {/* Animated Light Streaks */}
                 <motion.div 
-                  className="absolute inset-0 bg-gradient-to-t from-cosmic-deep via-cosmic-deep/70 to-transparent"
+                  className="absolute -inset-[100%] opacity-30 mix-blend-overlay"
                   animate={{ 
-                    opacity: hoveredId === project.id ? 0.9 : 0.8,
+                    rotate: [0, 90, 180, 270, 360],
                   }}
-                  transition={{ duration: 0.3 }}
+                  transition={{ 
+                    duration: 20 + project.id * 5, 
+                    repeat: Infinity, 
+                    ease: 'linear' 
+                  }}
+                  style={{
+                    background: `radial-gradient(circle at center, ${project.glow} 0%, transparent 70%)`,
+                  }}
                 />
               </div>
+
+              <motion.div 
+                className="absolute inset-0 bg-gradient-to-t from-cosmic-deep via-cosmic-deep/60 to-transparent"
+                animate={{ 
+                  opacity: hoveredId === project.id ? 0.95 : 0.85,
+                }}
+                transition={{ duration: 0.3 }}
+              />
 
               {/* Hover glow */}
               <motion.div
@@ -192,13 +218,16 @@ const ProjectsSection = () => {
                   transition={{ duration: 0.4, ease: [0.25, 0.46, 0.45, 0.94] }}
                   className="mt-6"
                 >
-                  <motion.button 
+                  <motion.a 
+                    href={project.link}
+                    target="_blank"
+                    rel="noopener noreferrer"
                     className="inline-flex items-center gap-2 px-6 py-3 rounded-xl bg-primary text-primary-foreground font-medium"
                     whileHover={{ scale: 1.02 }}
                     whileTap={{ scale: 0.98 }}
                   >
-                    View Case Study <ArrowUpRight className="w-4 h-4" />
-                  </motion.button>
+                    Visit Website <ArrowUpRight className="w-4 h-4" />
+                  </motion.a>
                 </motion.div>
               </div>
 
