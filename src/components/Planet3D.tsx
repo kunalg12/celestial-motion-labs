@@ -1,10 +1,10 @@
-import { useRef, useMemo } from 'react';
-import { Canvas, useFrame, useThree } from '@react-three/fiber';
-import { Sphere, useTexture, Float } from '@react-three/drei';
+import { useRef, useMemo, Suspense } from 'react';
+import { Canvas, useFrame } from '@react-three/fiber';
+import { Sphere } from '@react-three/drei';
 import * as THREE from 'three';
 import { MotionValue } from 'framer-motion';
 
-// Custom shaders for atmosphere
+// Atmosphere shader
 const atmosphereVertexShader = `
   varying vec3 vNormal;
   varying vec3 vPosition;
@@ -19,76 +19,12 @@ const atmosphereVertexShader = `
 const atmosphereFragmentShader = `
   varying vec3 vNormal;
   varying vec3 vPosition;
-  uniform vec3 glowColor;
-  uniform float intensity;
-  uniform float power;
   
   void main() {
     vec3 viewDirection = normalize(-vPosition);
-    float fresnel = pow(1.0 - dot(viewDirection, vNormal), power);
-    vec3 atmosphere = glowColor * fresnel * intensity;
-    gl_FragColor = vec4(atmosphere, fresnel * 0.8);
-  }
-`;
-
-// Day/Night shader for realistic lighting
-const earthVertexShader = `
-  varying vec2 vUv;
-  varying vec3 vNormal;
-  varying vec3 vPosition;
-  
-  void main() {
-    vUv = uv;
-    vNormal = normalize(normalMatrix * normal);
-    vPosition = (modelViewMatrix * vec4(position, 1.0)).xyz;
-    gl_Position = projectionMatrix * modelViewMatrix * vec4(position, 1.0);
-  }
-`;
-
-const earthFragmentShader = `
-  uniform sampler2D dayTexture;
-  uniform sampler2D nightTexture;
-  uniform sampler2D cloudsTexture;
-  uniform vec3 sunDirection;
-  uniform float cloudOpacity;
-  uniform float time;
-  
-  varying vec2 vUv;
-  varying vec3 vNormal;
-  varying vec3 vPosition;
-  
-  void main() {
-    vec3 sunDir = normalize(sunDirection);
-    float intensity = dot(vNormal, sunDir);
-    
-    // Smooth transition between day and night
-    float mixValue = smoothstep(-0.2, 0.4, intensity);
-    
-    vec4 dayColor = texture2D(dayTexture, vUv);
-    vec4 nightColor = texture2D(nightTexture, vUv);
-    
-    // Cloud UV with animation
-    vec2 cloudUv = vUv;
-    cloudUv.x += time * 0.002;
-    vec4 clouds = texture2D(cloudsTexture, cloudUv);
-    
-    // Mix day and night based on sun position
-    vec4 baseColor = mix(nightColor * 0.8, dayColor, mixValue);
-    
-    // Add clouds on day side with soft blend
-    float cloudMix = clouds.r * cloudOpacity * mixValue;
-    baseColor = mix(baseColor, vec4(1.0), cloudMix * 0.7);
-    
-    // Add subtle rim lighting
-    vec3 viewDir = normalize(-vPosition);
-    float rimLight = pow(1.0 - max(0.0, dot(viewDir, vNormal)), 3.0);
-    baseColor.rgb += vec3(0.2, 0.4, 0.8) * rimLight * 0.3;
-    
-    // Add specular highlight on water (approximation)
-    float specular = pow(max(0.0, dot(reflect(-sunDir, vNormal), viewDir)), 20.0);
-    baseColor.rgb += specular * 0.5 * mixValue;
-    
-    gl_FragColor = baseColor;
+    float fresnel = pow(1.0 - dot(viewDirection, vNormal), 3.0);
+    vec3 atmosphere = vec3(0.3, 0.6, 1.0) * fresnel * 1.5;
+    gl_FragColor = vec4(atmosphere, fresnel * 0.7);
   }
 `;
 
@@ -98,142 +34,183 @@ interface EarthMeshProps {
 }
 
 const EarthMesh = ({ mouseX, mouseY }: EarthMeshProps) => {
-  const meshRef = useRef<THREE.Mesh>(null);
+  const groupRef = useRef<THREE.Group>(null);
+  const earthRef = useRef<THREE.Mesh>(null);
   const cloudsRef = useRef<THREE.Mesh>(null);
-  const atmosphereRef = useRef<THREE.Mesh>(null);
-  const { viewport } = useThree();
   
-  // Create procedural textures
-  const textures = useMemo(() => {
-    // Day texture - Earth-like colors
-    const dayCanvas = document.createElement('canvas');
-    dayCanvas.width = 1024;
-    dayCanvas.height = 512;
-    const dayCtx = dayCanvas.getContext('2d')!;
+  // Create high-quality procedural textures
+  const { earthTexture, nightTexture, cloudsTexture, bumpTexture } = useMemo(() => {
+    // Earth day texture
+    const earthCanvas = document.createElement('canvas');
+    earthCanvas.width = 2048;
+    earthCanvas.height = 1024;
+    const earthCtx = earthCanvas.getContext('2d')!;
     
-    // Create gradient base
-    const dayGradient = dayCtx.createLinearGradient(0, 0, 1024, 512);
-    dayGradient.addColorStop(0, '#1a4a6e');
-    dayGradient.addColorStop(0.3, '#2d5a7b');
-    dayGradient.addColorStop(0.5, '#3d7a9e');
-    dayGradient.addColorStop(0.7, '#2d6b8a');
-    dayGradient.addColorStop(1, '#1a4a6e');
-    dayCtx.fillStyle = dayGradient;
-    dayCtx.fillRect(0, 0, 1024, 512);
+    // Ocean base - deep blue gradient
+    const oceanGradient = earthCtx.createLinearGradient(0, 0, 2048, 1024);
+    oceanGradient.addColorStop(0, '#0a3d62');
+    oceanGradient.addColorStop(0.3, '#1e6091');
+    oceanGradient.addColorStop(0.5, '#2980b9');
+    oceanGradient.addColorStop(0.7, '#1e6091');
+    oceanGradient.addColorStop(1, '#0a3d62');
+    earthCtx.fillStyle = oceanGradient;
+    earthCtx.fillRect(0, 0, 2048, 1024);
     
-    // Add landmass shapes
-    dayCtx.fillStyle = '#2a5a3a';
-    for (let i = 0; i < 50; i++) {
-      const x = Math.random() * 1024;
-      const y = Math.random() * 512;
-      const w = 30 + Math.random() * 100;
-      const h = 20 + Math.random() * 60;
-      dayCtx.beginPath();
-      dayCtx.ellipse(x, y, w, h, Math.random() * Math.PI, 0, Math.PI * 2);
-      dayCtx.fill();
+    // Add continents with varied greens and browns
+    const continentColors = ['#2d5a3d', '#3d6b4a', '#4a7c5a', '#5a8c6a', '#3a5a3a'];
+    const desertColors = ['#c4a35a', '#b89b52', '#9c8445'];
+    
+    // Draw landmasses
+    for (let i = 0; i < 80; i++) {
+      const x = Math.random() * 2048;
+      const y = 200 + Math.random() * 624; // Avoid poles
+      earthCtx.fillStyle = continentColors[Math.floor(Math.random() * continentColors.length)];
+      earthCtx.beginPath();
+      
+      // Create organic shapes
+      const points = 8 + Math.floor(Math.random() * 6);
+      const baseRadius = 40 + Math.random() * 120;
+      for (let j = 0; j < points; j++) {
+        const angle = (j / points) * Math.PI * 2;
+        const radius = baseRadius * (0.6 + Math.random() * 0.8);
+        const px = x + Math.cos(angle) * radius;
+        const py = y + Math.sin(angle) * radius * 0.6;
+        if (j === 0) earthCtx.moveTo(px, py);
+        else earthCtx.lineTo(px, py);
+      }
+      earthCtx.closePath();
+      earthCtx.fill();
     }
     
-    // Add polar ice
-    dayCtx.fillStyle = '#c8d8e8';
-    dayCtx.fillRect(0, 0, 1024, 30);
-    dayCtx.fillRect(0, 482, 1024, 30);
+    // Add deserts
+    for (let i = 0; i < 20; i++) {
+      const x = Math.random() * 2048;
+      const y = 350 + Math.random() * 324;
+      earthCtx.fillStyle = desertColors[Math.floor(Math.random() * desertColors.length)];
+      earthCtx.beginPath();
+      earthCtx.ellipse(x, y, 30 + Math.random() * 60, 20 + Math.random() * 40, 0, 0, Math.PI * 2);
+      earthCtx.fill();
+    }
     
-    const dayTexture = new THREE.CanvasTexture(dayCanvas);
-    dayTexture.wrapS = THREE.RepeatWrapping;
-    dayTexture.wrapT = THREE.ClampToEdgeWrapping;
+    // Polar ice caps
+    const northPoleGradient = earthCtx.createLinearGradient(0, 0, 0, 150);
+    northPoleGradient.addColorStop(0, '#ffffff');
+    northPoleGradient.addColorStop(0.5, '#e8f4f8');
+    northPoleGradient.addColorStop(1, 'transparent');
+    earthCtx.fillStyle = northPoleGradient;
+    earthCtx.fillRect(0, 0, 2048, 150);
     
-    // Night texture - city lights
+    const southPoleGradient = earthCtx.createLinearGradient(0, 874, 0, 1024);
+    southPoleGradient.addColorStop(0, 'transparent');
+    southPoleGradient.addColorStop(0.5, '#e8f4f8');
+    southPoleGradient.addColorStop(1, '#ffffff');
+    earthCtx.fillStyle = southPoleGradient;
+    earthCtx.fillRect(0, 874, 2048, 150);
+    
+    const earthTex = new THREE.CanvasTexture(earthCanvas);
+    earthTex.wrapS = THREE.RepeatWrapping;
+    earthTex.colorSpace = THREE.SRGBColorSpace;
+    
+    // Night texture with city lights
     const nightCanvas = document.createElement('canvas');
-    nightCanvas.width = 1024;
-    nightCanvas.height = 512;
+    nightCanvas.width = 2048;
+    nightCanvas.height = 1024;
     const nightCtx = nightCanvas.getContext('2d')!;
     
-    nightCtx.fillStyle = '#020208';
-    nightCtx.fillRect(0, 0, 1024, 512);
+    nightCtx.fillStyle = '#010208';
+    nightCtx.fillRect(0, 0, 2048, 1024);
     
-    // Add city lights
-    nightCtx.fillStyle = '#ffaa44';
-    for (let i = 0; i < 500; i++) {
-      const x = Math.random() * 1024;
-      const y = 100 + Math.random() * 312;
-      const size = Math.random() * 2;
-      nightCtx.beginPath();
-      nightCtx.arc(x, y, size, 0, Math.PI * 2);
-      nightCtx.fill();
-    }
+    // City light clusters
+    const clusters = [
+      { x: 400, y: 300, size: 150 },  // Europe
+      { x: 600, y: 400, size: 100 },  // Africa
+      { x: 1400, y: 350, size: 180 }, // East Asia
+      { x: 1600, y: 500, size: 80 },  // Southeast Asia
+      { x: 1800, y: 300, size: 120 }, // Japan
+      { x: 200, y: 350, size: 140 },  // East US
+      { x: 100, y: 400, size: 100 },  // West US
+    ];
     
-    // Brighter clusters
-    nightCtx.fillStyle = '#ffcc66';
-    for (let i = 0; i < 100; i++) {
-      const x = Math.random() * 1024;
-      const y = 150 + Math.random() * 212;
-      const size = 1 + Math.random() * 3;
-      nightCtx.beginPath();
-      nightCtx.arc(x, y, size, 0, Math.PI * 2);
-      nightCtx.fill();
-    }
+    clusters.forEach(cluster => {
+      for (let i = 0; i < 200; i++) {
+        const angle = Math.random() * Math.PI * 2;
+        const dist = Math.random() * cluster.size;
+        const x = cluster.x + Math.cos(angle) * dist;
+        const y = cluster.y + Math.sin(angle) * dist * 0.6;
+        const brightness = 0.3 + Math.random() * 0.7;
+        nightCtx.fillStyle = `rgba(255, ${180 + Math.random() * 75}, ${100 + Math.random() * 50}, ${brightness})`;
+        nightCtx.beginPath();
+        nightCtx.arc(x, y, 0.5 + Math.random() * 2, 0, Math.PI * 2);
+        nightCtx.fill();
+      }
+    });
     
-    const nightTexture = new THREE.CanvasTexture(nightCanvas);
-    nightTexture.wrapS = THREE.RepeatWrapping;
-    nightTexture.wrapT = THREE.ClampToEdgeWrapping;
+    const nightTex = new THREE.CanvasTexture(nightCanvas);
+    nightTex.wrapS = THREE.RepeatWrapping;
+    nightTex.colorSpace = THREE.SRGBColorSpace;
     
     // Clouds texture
     const cloudsCanvas = document.createElement('canvas');
-    cloudsCanvas.width = 1024;
-    cloudsCanvas.height = 512;
+    cloudsCanvas.width = 2048;
+    cloudsCanvas.height = 1024;
     const cloudsCtx = cloudsCanvas.getContext('2d')!;
     
-    cloudsCtx.fillStyle = 'transparent';
-    cloudsCtx.fillRect(0, 0, 1024, 512);
+    cloudsCtx.clearRect(0, 0, 2048, 1024);
     
-    // Create wispy clouds
-    for (let i = 0; i < 200; i++) {
-      const x = Math.random() * 1024;
-      const y = Math.random() * 512;
-      const radius = 20 + Math.random() * 80;
-      const gradient = cloudsCtx.createRadialGradient(x, y, 0, x, y, radius);
-      gradient.addColorStop(0, 'rgba(255, 255, 255, 0.4)');
-      gradient.addColorStop(0.5, 'rgba(255, 255, 255, 0.2)');
+    // Create realistic cloud patterns
+    for (let i = 0; i < 300; i++) {
+      const x = Math.random() * 2048;
+      const y = Math.random() * 1024;
+      const size = 30 + Math.random() * 150;
+      const gradient = cloudsCtx.createRadialGradient(x, y, 0, x, y, size);
+      const opacity = 0.1 + Math.random() * 0.4;
+      gradient.addColorStop(0, `rgba(255, 255, 255, ${opacity})`);
+      gradient.addColorStop(0.4, `rgba(255, 255, 255, ${opacity * 0.5})`);
       gradient.addColorStop(1, 'rgba(255, 255, 255, 0)');
       cloudsCtx.fillStyle = gradient;
       cloudsCtx.beginPath();
-      cloudsCtx.arc(x, y, radius, 0, Math.PI * 2);
+      cloudsCtx.ellipse(x, y, size, size * 0.4, Math.random() * Math.PI, 0, Math.PI * 2);
       cloudsCtx.fill();
     }
     
-    const cloudsTexture = new THREE.CanvasTexture(cloudsCanvas);
-    cloudsTexture.wrapS = THREE.RepeatWrapping;
-    cloudsTexture.wrapT = THREE.ClampToEdgeWrapping;
+    const cloudsTex = new THREE.CanvasTexture(cloudsCanvas);
+    cloudsTex.wrapS = THREE.RepeatWrapping;
     
-    return { dayTexture, nightTexture, cloudsTexture };
+    // Bump map for terrain
+    const bumpCanvas = document.createElement('canvas');
+    bumpCanvas.width = 1024;
+    bumpCanvas.height = 512;
+    const bumpCtx = bumpCanvas.getContext('2d')!;
+    
+    bumpCtx.fillStyle = '#808080';
+    bumpCtx.fillRect(0, 0, 1024, 512);
+    
+    for (let i = 0; i < 100; i++) {
+      const x = Math.random() * 1024;
+      const y = Math.random() * 512;
+      const brightness = 100 + Math.floor(Math.random() * 100);
+      bumpCtx.fillStyle = `rgb(${brightness}, ${brightness}, ${brightness})`;
+      bumpCtx.beginPath();
+      bumpCtx.ellipse(x, y, 20 + Math.random() * 50, 10 + Math.random() * 30, 0, 0, Math.PI * 2);
+      bumpCtx.fill();
+    }
+    
+    const bumpTex = new THREE.CanvasTexture(bumpCanvas);
+    bumpTex.wrapS = THREE.RepeatWrapping;
+    
+    return { 
+      earthTexture: earthTex, 
+      nightTexture: nightTex, 
+      cloudsTexture: cloudsTex,
+      bumpTexture: bumpTex 
+    };
   }, []);
-  
-  // Custom shader material
-  const earthMaterial = useMemo(() => {
-    return new THREE.ShaderMaterial({
-      vertexShader: earthVertexShader,
-      fragmentShader: earthFragmentShader,
-      uniforms: {
-        dayTexture: { value: textures.dayTexture },
-        nightTexture: { value: textures.nightTexture },
-        cloudsTexture: { value: textures.cloudsTexture },
-        sunDirection: { value: new THREE.Vector3(1, 0.3, 0.5).normalize() },
-        cloudOpacity: { value: 0.6 },
-        time: { value: 0 },
-      },
-    });
-  }, [textures]);
   
   // Atmosphere material
   const atmosphereMaterial = useMemo(() => {
     return new THREE.ShaderMaterial({
       vertexShader: atmosphereVertexShader,
       fragmentShader: atmosphereFragmentShader,
-      uniforms: {
-        glowColor: { value: new THREE.Color(0.3, 0.6, 1.0) },
-        intensity: { value: 1.2 },
-        power: { value: 4.0 },
-      },
       side: THREE.BackSide,
       blending: THREE.AdditiveBlending,
       transparent: true,
@@ -242,80 +219,75 @@ const EarthMesh = ({ mouseX, mouseY }: EarthMeshProps) => {
   }, []);
   
   useFrame((state, delta) => {
-    if (meshRef.current) {
+    if (groupRef.current) {
+      // Mouse parallax on the whole group
+      const targetRotX = (mouseY?.get() ?? 0) * 0.1;
+      const targetRotY = (mouseX?.get() ?? 0) * 0.1;
+      groupRef.current.rotation.x = THREE.MathUtils.lerp(groupRef.current.rotation.x, targetRotX, 0.02);
+    }
+    
+    if (earthRef.current) {
       // Slow continuous rotation
-      meshRef.current.rotation.y += delta * 0.02;
-      
-      // Mouse parallax
-      const targetX = (mouseY?.get() ?? 0) * 0.15;
-      const targetY = (mouseX?.get() ?? 0) * 0.15;
-      meshRef.current.rotation.x = THREE.MathUtils.lerp(meshRef.current.rotation.x, targetX, 0.02);
-      
-      // Update time uniform for cloud animation
-      earthMaterial.uniforms.time.value = state.clock.elapsedTime;
-      
-      // Animate sun direction for day/night cycle
-      const sunAngle = state.clock.elapsedTime * 0.05;
-      earthMaterial.uniforms.sunDirection.value.set(
-        Math.cos(sunAngle),
-        0.3,
-        Math.sin(sunAngle)
-      ).normalize();
+      earthRef.current.rotation.y += delta * 0.03;
     }
     
     if (cloudsRef.current) {
       // Clouds rotate slightly faster
-      cloudsRef.current.rotation.y += delta * 0.025;
-    }
-    
-    if (atmosphereRef.current && meshRef.current) {
-      atmosphereRef.current.rotation.copy(meshRef.current.rotation);
+      cloudsRef.current.rotation.y += delta * 0.04;
     }
   });
   
   return (
-    <Float
-      speed={0.5}
-      rotationIntensity={0.1}
-      floatIntensity={0.3}
-    >
-      <group scale={3.5}>
-        {/* Main Earth mesh */}
-        <mesh ref={meshRef} material={earthMaterial}>
-          <sphereGeometry args={[1, 64, 64]} />
-        </mesh>
-        
-        {/* Cloud layer */}
-        <mesh ref={cloudsRef} scale={1.01}>
-          <sphereGeometry args={[1, 64, 64]} />
-          <meshStandardMaterial
-            map={textures.cloudsTexture}
-            transparent
-            opacity={0.35}
-            depthWrite={false}
-            blending={THREE.NormalBlending}
-          />
-        </mesh>
-        
-        {/* Atmosphere glow */}
-        <mesh ref={atmosphereRef} scale={1.15} material={atmosphereMaterial}>
-          <sphereGeometry args={[1, 64, 64]} />
-        </mesh>
-        
-        {/* Inner atmosphere glow */}
-        <mesh scale={1.05}>
-          <sphereGeometry args={[1, 64, 64]} />
-          <meshBasicMaterial
-            color="#4488ff"
-            transparent
-            opacity={0.08}
-            side={THREE.BackSide}
-          />
-        </mesh>
-      </group>
-    </Float>
+    <group ref={groupRef} scale={2.8} position={[0, 0, 0]}>
+      {/* Main Earth */}
+      <mesh ref={earthRef}>
+        <sphereGeometry args={[1, 64, 64]} />
+        <meshStandardMaterial
+          map={earthTexture}
+          bumpMap={bumpTexture}
+          bumpScale={0.02}
+          roughness={0.8}
+          metalness={0.1}
+        />
+      </mesh>
+      
+      {/* Cloud layer */}
+      <mesh ref={cloudsRef} scale={1.015}>
+        <sphereGeometry args={[1, 64, 64]} />
+        <meshStandardMaterial
+          map={cloudsTexture}
+          transparent
+          opacity={0.4}
+          depthWrite={false}
+        />
+      </mesh>
+      
+      {/* Atmosphere glow - outer */}
+      <mesh scale={1.2} material={atmosphereMaterial}>
+        <sphereGeometry args={[1, 32, 32]} />
+      </mesh>
+      
+      {/* Inner rim light */}
+      <mesh scale={1.02}>
+        <sphereGeometry args={[1, 32, 32]} />
+        <meshBasicMaterial
+          color="#4488ff"
+          transparent
+          opacity={0.05}
+          side={THREE.BackSide}
+        />
+      </mesh>
+    </group>
   );
 };
+
+// Fallback component while loading
+const PlanetFallback = () => (
+  <mesh scale={2.8}>
+    <sphereGeometry args={[1, 32, 32]} />
+    <meshBasicMaterial color="#1a4a6e" />
+  </mesh>
+);
 
 interface Planet3DProps {
   mouseX?: MotionValue<number>;
@@ -325,57 +297,63 @@ interface Planet3DProps {
 
 const Planet3D = ({ mouseX, mouseY, className }: Planet3DProps) => {
   return (
-    <div className={`absolute pointer-events-none ${className ?? ''}`}
+    <div 
+      className={`absolute pointer-events-none ${className ?? ''}`}
       style={{
-        right: '-25%',
+        right: '-20%',
         top: '50%',
         transform: 'translateY(-50%)',
-        width: 'clamp(800px, 70vw, 1400px)',
-        height: 'clamp(800px, 70vw, 1400px)',
+        width: 'clamp(700px, 60vw, 1200px)',
+        height: 'clamp(700px, 60vw, 1200px)',
       }}
     >
       <Canvas
-        camera={{ position: [0, 0, 6], fov: 45 }}
+        camera={{ position: [0, 0, 5], fov: 50 }}
         style={{ background: 'transparent' }}
         gl={{ 
           alpha: true, 
           antialias: true,
           powerPreference: 'high-performance',
+          toneMapping: THREE.ACESFilmicToneMapping,
+          toneMappingExposure: 1.2,
         }}
       >
-        {/* Ambient light for base visibility */}
-        <ambientLight intensity={0.1} />
+        {/* Lighting setup */}
+        <ambientLight intensity={0.15} />
         
-        {/* Main directional light (sun) */}
+        {/* Sun light */}
         <directionalLight
           position={[5, 2, 3]}
-          intensity={2}
+          intensity={2.5}
           color="#ffffff"
         />
         
-        {/* Rim light */}
+        {/* Blue rim light from behind */}
         <directionalLight
-          position={[-3, 0, -2]}
-          intensity={0.3}
+          position={[-4, 0, -3]}
+          intensity={0.6}
           color="#4488ff"
         />
         
-        {/* Fill light */}
+        {/* Subtle fill from below */}
         <pointLight
-          position={[-5, -3, 2]}
-          intensity={0.2}
-          color="#6644aa"
+          position={[0, -3, 2]}
+          intensity={0.15}
+          color="#8866cc"
         />
         
-        <EarthMesh mouseX={mouseX} mouseY={mouseY} />
+        <Suspense fallback={<PlanetFallback />}>
+          <EarthMesh mouseX={mouseX} mouseY={mouseY} />
+        </Suspense>
       </Canvas>
       
-      {/* Outer glow effect */}
+      {/* Outer atmospheric glow overlay */}
       <div 
         className="absolute inset-0 pointer-events-none"
         style={{
-          background: 'radial-gradient(circle at 50% 50%, hsla(199, 89%, 48%, 0.15) 0%, transparent 50%)',
-          filter: 'blur(40px)',
+          background: 'radial-gradient(circle at 50% 50%, hsla(199, 89%, 48%, 0.12) 0%, transparent 45%)',
+          filter: 'blur(30px)',
+          transform: 'scale(1.3)',
         }}
       />
     </div>
