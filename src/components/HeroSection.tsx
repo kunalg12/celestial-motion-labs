@@ -53,8 +53,8 @@ const HeroSection = ({ mouseX, mouseY }: HeroSectionProps) => {
         className="absolute inset-0 pointer-events-none"
         style={{
           background: `
-            radial-gradient(ellipse 80% 60% at 60% 50%, hsla(199, 89%, 48%, 0.12) 0%, transparent 50%),
-            radial-gradient(ellipse 60% 40% at 70% 60%, hsla(263, 70%, 50%, 0.08) 0%, transparent 40%)
+            radial-gradient(ellipse 80% 60% at 60% 50%, hsla(199, 0%, 48%, 0.12) 0%, transparent 50%),
+            radial-gradient(ellipse 60% 40% at 70% 60%, hsla(263, 0%, 50%, 0.08) 0%, transparent 40%)
           `,
           willChange: 'transform', // Hardware acceleration hint
         }}

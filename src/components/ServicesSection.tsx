@@ -39,6 +39,18 @@ const services = [
     description: 'Accelerate reach with performance-driven campaigns.',
     orbitDelay: 2.5,
   },
+  {
+    icon: Zap,
+    title: 'Rapid MVP',
+    description: 'Go from concept to launch in just 4 weeks with our accelerated build sprints.',
+    orbitDelay: 3,
+  },
+  {
+    icon: Globe,
+    title: 'Mobile Solutions',
+    description: 'Powerful cross-platform mobile apps built with React Native Expo.',
+    orbitDelay: 3.5,
+  },
 ];
 
 const ServicesSection = () => {
@@ -154,9 +166,9 @@ const ServicesSection = () => {
               }}
               className="group relative rounded-2xl p-8 cursor-pointer overflow-hidden"
               style={{
-                background: 'hsla(224, 71%, 6%, 0.6)',
+                background: 'hsla(224, 0%, 6%, 0.6)',
                 backdropFilter: 'blur(10px)',
-                border: '1px solid hsla(217, 33%, 20%, 0.3)',
+                border: '1px solid hsla(217, 0%, 20%, 0.3)',
               }}
             >
               {/* Hover glow background */}

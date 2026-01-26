@@ -7,10 +7,12 @@
 @layer base {
   :root {
     /* Cosmic Color System */
-    --background: 228 84% 4%;
+    --background: 228 0% 0%;
+    /* Pure Black */
     --foreground: 210 40% 98%;
 
-    --card: 224 71% 6%;
+    --card: 224 0% 4%;
+    /* Near black */
     --card-foreground: 210 40% 98%;
 
     --popover: 224 71% 6%;
@@ -38,25 +40,25 @@
     --radius: 0.75rem;
 
     /* Custom Cosmic Tokens */
-    --cosmic-deep: 228 84% 4%;
-    --cosmic-void: 224 71% 6%;
-    --cosmic-navy: 217 50% 10%;
+    --cosmic-deep: 228 0% 0%;
+    --cosmic-void: 224 0% 4%;
+    --cosmic-navy: 217 0% 8%;
     --orbital-blue: 210 100% 60%;
     --star-glow: 199 89% 65%;
     --nebula-purple: 263 70% 50%;
     --aurora-green: 160 84% 39%;
-    
+
     /* Glow Effects */
     --glow-primary: 0 0 60px hsla(199, 89%, 48%, 0.4);
     --glow-accent: 0 0 40px hsla(263, 70%, 50%, 0.3);
     --glow-star: 0 0 20px hsla(199, 89%, 65%, 0.6);
-    
+
     /* Glassmorphism */
-    --glass-bg: hsla(224, 71%, 6%, 0.7);
-    --glass-border: hsla(217, 33%, 30%, 0.3);
+    --glass-bg: hsla(224, 0%, 4%, 0.7);
+    --glass-border: hsla(217, 0%, 30%, 0.3);
     --glass-blur: 20px;
 
-    --sidebar-background: 224 71% 6%;
+    --sidebar-background: 224 0% 4%;
     --sidebar-foreground: 210 40% 98%;
     --sidebar-primary: 199 89% 48%;
     --sidebar-primary-foreground: 228 84% 4%;
@@ -81,12 +83,18 @@
     font-family: 'Inter', sans-serif;
   }
 
-  h1, h2, h3, h4, h5, h6 {
+  h1,
+  h2,
+  h3,
+  h4,
+  h5,
+  h6 {
     font-family: 'Space Grotesk', sans-serif;
   }
 }
 
 @layer components {
+
   /* Glassmorphic Card */
   .glass-card {
     background: var(--glass-bg);
@@ -112,7 +120,7 @@
 
   /* Star Field */
   .star-field {
-    background-image: 
+    background-image:
       radial-gradient(2px 2px at 20px 30px, hsl(var(--star-glow)), transparent),
       radial-gradient(2px 2px at 40px 70px, hsl(var(--star-glow)), transparent),
       radial-gradient(1px 1px at 90px 40px, hsl(var(--foreground)), transparent),
@@ -170,27 +178,27 @@
 
   /* Section Gradient */
   .section-gradient {
-    background: linear-gradient(180deg, 
-      hsl(var(--cosmic-deep)) 0%,
-      hsl(var(--cosmic-void)) 50%,
-      hsl(var(--cosmic-deep)) 100%
-    );
+    background: linear-gradient(180deg,
+        hsl(var(--cosmic-deep)) 0%,
+        hsl(var(--cosmic-void)) 50%,
+        hsl(var(--cosmic-deep)) 100%);
   }
 
   /* Cosmic Divider */
   .cosmic-divider {
     @apply h-px w-full;
-    background: linear-gradient(90deg, 
-      transparent,
-      hsl(var(--primary) / 0.5),
-      transparent
-    );
+    background: linear-gradient(90deg,
+        transparent,
+        hsl(var(--primary) / 0.5),
+        transparent);
   }
 }
 
 @layer utilities {
+
   /* Reduced motion */
   @media (prefers-reduced-motion: reduce) {
+
     .orbital-ring,
     .star-field,
     .float,
@@ -205,6 +213,7 @@
   from {
     transform: rotate(0deg);
   }
+
   to {
     transform: rotate(360deg);
   }
@@ -214,24 +223,31 @@
   from {
     background-position: 0 0;
   }
+
   to {
     background-position: 350px 200px;
   }
 }
 
 @keyframes float {
-  0%, 100% {
+
+  0%,
+  100% {
     transform: translateY(0px);
   }
+
   50% {
     transform: translateY(-20px);
   }
 }
 
 @keyframes pulse-glow {
-  0%, 100% {
+
+  0%,
+  100% {
     box-shadow: 0 0 60px hsla(199, 89%, 48%, 0.4);
   }
+
   50% {
     box-shadow: 0 0 100px hsla(199, 89%, 48%, 0.6);
   }

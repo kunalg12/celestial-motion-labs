@@ -180,9 +180,9 @@ const AboutSection = () => {
                 }}
                 className="rounded-2xl p-8 text-center group cursor-default relative overflow-hidden"
                 style={{
-                  background: 'hsla(224, 71%, 6%, 0.6)',
+                  background: 'hsla(224, 0%, 6%, 0.6)',
                   backdropFilter: 'blur(10px)',
-                  border: '1px solid hsla(217, 33%, 20%, 0.3)',
+                  border: '1px solid hsla(217, 0%, 20%, 0.3)',
                 }}
               >
                 {/* Hover glow */}

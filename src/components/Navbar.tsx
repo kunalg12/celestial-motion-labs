@@ -64,10 +64,10 @@ const Navbar = () => {
           style={{
             x: springX,
             y: springY,
-            backgroundColor: `hsla(224, 71%, 6%, ${isScrolled ? 0.9 : 0.6})`,
+            backgroundColor: `hsla(224, 0%, 6%, ${isScrolled ? 0.9 : 0.6})`,
             backdropFilter: `blur(${isScrolled ? 24 : 16}px)`,
             WebkitBackdropFilter: `blur(${isScrolled ? 24 : 16}px)`,
-            border: '1px solid hsla(217, 33%, 30%, 0.2)',
+            border: '1px solid hsla(217, 0%, 30%, 0.2)',
             boxShadow: `
               0 4px 30px hsla(0, 0%, 0%, 0.3),
               inset 0 1px 0 hsla(217, 33%, 50%, 0.1),
@@ -209,10 +209,10 @@ const Navbar = () => {
             transition={{ duration: 0.3, ease: [0.25, 0.46, 0.45, 0.94] }}
             className="fixed top-24 left-4 right-4 z-40 rounded-2xl p-6 md:hidden"
             style={{
-              backgroundColor: 'hsla(224, 71%, 6%, 0.95)',
+              backgroundColor: 'hsla(224, 0%, 6%, 0.95)',
               backdropFilter: 'blur(24px)',
               WebkitBackdropFilter: 'blur(24px)',
-              border: '1px solid hsla(217, 33%, 30%, 0.2)',
+              border: '1px solid hsla(217, 0%, 30%, 0.2)',
               boxShadow: '0 20px 50px hsla(0, 0%, 0%, 0.5)',
             }}
           >

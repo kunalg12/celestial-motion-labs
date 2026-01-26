@@ -37,7 +37,7 @@ const Planet = ({ scrollProgress, mouseX, mouseY }: PlanetProps) => {
       <motion.div
         className="absolute inset-0"
         style={{
-          background: 'radial-gradient(circle at 70% 50%, hsla(199, 89%, 48%, 0.12) 0%, transparent 70%)',
+          background: 'radial-gradient(circle at 70% 50%, hsla(220, 0%, 50%, 0.12) 0%, transparent 70%)',
           filter: 'blur(60px)',
           transform: 'scale(1.5)',
         }}
@@ -55,7 +55,7 @@ const Planet = ({ scrollProgress, mouseX, mouseY }: PlanetProps) => {
       <motion.div
         className="absolute inset-0 rounded-full"
         style={{
-          background: 'radial-gradient(circle at 65% 45%, hsla(199, 89%, 60%, 0.15) 0%, transparent 65%)',
+          background: 'radial-gradient(circle at 65% 45%, hsla(220, 0%, 60%, 0.15) 0%, transparent 65%)',
           filter: 'blur(30px)',
           transform: 'scale(1.05)',
         }}

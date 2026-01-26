@@ -235,8 +235,8 @@ const ProjectsSection = () => {
               <motion.div 
                 className="absolute top-6 right-6 w-12 h-12 rounded-full flex items-center justify-center"
                 style={{
-                  background: 'hsla(224, 71%, 6%, 0.5)',
-                  border: '1px solid hsla(217, 33%, 30%, 0.3)',
+                  background: 'hsla(224, 0%, 6%, 0.5)',
+                  border: '1px solid hsla(217, 0%, 30%, 0.3)',
                 }}
                 animate={{
                   borderColor: hoveredId === project.id 

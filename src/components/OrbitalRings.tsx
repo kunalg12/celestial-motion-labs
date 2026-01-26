@@ -52,9 +52,9 @@ const Ring = ({ ring, index, mouseX, mouseY }: { ring: RingData; index: number; 
       >
         <defs>
           <linearGradient id={`ring-gradient-${index}`} x1="0%" y1="0%" x2="100%" y2="100%">
-            <stop offset="0%" stopColor="hsl(199, 89%, 48%)" stopOpacity={ring.opacity * 2} />
-            <stop offset="50%" stopColor="hsl(263, 70%, 50%)" stopOpacity={ring.opacity} />
-            <stop offset="100%" stopColor="hsl(199, 89%, 48%)" stopOpacity={ring.opacity * 2} />
+            <stop offset="0%" stopColor="hsl(220, 0%, 50%)" stopOpacity={ring.opacity * 2} />
+            <stop offset="50%" stopColor="hsl(263, 0%, 50%)" stopOpacity={ring.opacity} />
+            <stop offset="100%" stopColor="hsl(220, 0%, 50%)" stopOpacity={ring.opacity * 2} />
           </linearGradient>
         </defs>
         <circle
@@ -66,7 +66,7 @@ const Ring = ({ ring, index, mouseX, mouseY }: { ring: RingData; index: number; 
           strokeWidth={ring.strokeWidth}
           strokeDasharray={ring.dashArray}
           style={{
-            filter: ring.glow ? 'drop-shadow(0 0 4px hsla(199, 89%, 60%, 0.6))' : 'none',
+            filter: ring.glow ? 'drop-shadow(0 0 4px hsla(220, 0%, 60%, 0.6))' : 'none',
           }}
         />
         
@@ -89,7 +89,7 @@ const Ring = ({ ring, index, mouseX, mouseY }: { ring: RingData; index: number; 
                 cx={satX}
                 cy={satY}
                 r={sat.size}
-                fill="hsl(199, 89%, 65%)"
+                fill="hsl(220, 0%, 65%)"
               />
             </g>
           );
@@ -97,8 +97,8 @@ const Ring = ({ ring, index, mouseX, mouseY }: { ring: RingData; index: number; 
         
         <defs>
           <radialGradient id="satellite-glow">
-            <stop offset="0%" stopColor="hsl(199, 89%, 48%)" stopOpacity="0.4" />
-            <stop offset="100%" stopColor="hsl(199, 89%, 48%)" stopOpacity="0" />
+            <stop offset="0%" stopColor="hsl(220, 0%, 50%)" stopOpacity="0.4" />
+            <stop offset="100%" stopColor="hsl(220, 0%, 50%)" stopOpacity="0" />
           </radialGradient>
         </defs>
       </motion.svg>
@@ -204,7 +204,7 @@ const OrbitalRings = ({ mouseX, mouseY }: OrbitalRingsProps) => {
           height: 300,
           left: -150,
           top: -150,
-          background: 'radial-gradient(circle, hsla(199, 89%, 48%, 0.08) 0%, transparent 70%)',
+          background: 'radial-gradient(circle, hsla(220, 0%, 50%, 0.08) 0%, transparent 70%)',
           x: innerGlowX,
           y: innerGlowY,
         }}
