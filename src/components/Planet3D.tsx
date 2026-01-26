@@ -84,7 +84,7 @@ const EarthMesh = ({ mouseX, mouseY }: EarthMeshProps) => {
   });
   
   return (
-    <group ref={groupRef} scale={2.6} position={[0, 0, 0]} rotation={[0.2, 0, 0]}>
+    <group ref={groupRef} scale={2} position={[0, 0, 0]} rotation={[0.2, 0, 0]}>
       {/* Main Earth */}
       <mesh ref={earthRef}>
         <sphereGeometry args={[1, 64, 64]} />
@@ -142,7 +142,7 @@ const EarthMesh = ({ mouseX, mouseY }: EarthMeshProps) => {
 
 // Loading fallback
 const LoadingFallback = () => (
-  <mesh scale={2.6}>
+  <mesh scale={2}>
     <sphereGeometry args={[1, 32, 32]} />
     <meshBasicMaterial color="#1a4a6e" wireframe />
   </mesh>
@@ -167,7 +167,7 @@ const Planet3D = ({ mouseX, mouseY, className }: Planet3DProps) => {
       }}
     >
       <Canvas
-        camera={{ position: [0, 0, 4.5], fov: 50 }}
+        camera={{ position: [0, 0, 6], fov: 45 }}
         style={{ background: 'transparent' }}
         gl={{ 
           alpha: true, 
