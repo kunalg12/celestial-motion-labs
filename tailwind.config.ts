@@ -109,6 +109,14 @@ export default {
           from: { opacity: "0", transform: "translateY(40px)" },
           to: { opacity: "1", transform: "translateY(0)" },
         },
+        "meteor": {
+          "0%": { transform: "rotate(215deg) translateX(0)", opacity: "1" },
+          "70%": { opacity: "1" },
+          "100%": {
+            transform: "rotate(215deg) translateX(-500px)",
+            opacity: "0",
+          },
+        },
       },
       animation: {
         "accordion-down": "accordion-down 0.2s ease-out",
@@ -119,6 +127,7 @@ export default {
         "float": "float 6s ease-in-out infinite",
         "pulse-glow": "pulse-glow 4s ease-in-out infinite",
         "fade-up": "fade-up 0.8s ease-out forwards",
+        "meteor-effect": "meteor 5s linear infinite",
       },
       backgroundImage: {
         'cosmic-gradient': 'linear-gradient(180deg, hsl(228 84% 4%) 0%, hsl(224 71% 6%) 50%, hsl(228 84% 4%) 100%)',

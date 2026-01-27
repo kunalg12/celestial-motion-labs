@@ -207,9 +207,10 @@ const ServicesSection = () => {
                     delay: service.orbitDelay,
                   }}
                   style={{
-                    top: '50%',
+                    top: 'calc(50% - 20px)',
                     left: '50%',
-                    transformOrigin: '0 -20px',
+                    marginLeft: '-3px',
+                    transformOrigin: '50% 20px',
                     boxShadow: '0 0 6px hsla(199, 89%, 48%, 0.6)',
                   }}
                 />

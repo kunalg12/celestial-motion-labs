@@ -1,6 +1,7 @@
 import { motion, useInView } from 'framer-motion';
 import { useRef } from 'react';
 import { Star } from 'lucide-react';
+import { Meteors } from './ui/meteors';
 
 const testimonials = [
   {
@@ -56,7 +57,10 @@ const TestimonialsSection = () => {
   };
 
   return (
-    <section className="relative py-32">
+    <section className="relative py-32 overflow-hidden">
+      <div className="absolute inset-0 pointer-events-none">
+        <Meteors number={20} />
+      </div>
       <div ref={containerRef} className="container mx-auto px-6">
         <motion.div
           initial={{ opacity: 0, y: 40 }}

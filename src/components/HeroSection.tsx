@@ -118,7 +118,7 @@ const HeroSection = ({ mouseX, mouseY }: HeroSectionProps) => {
       />
       
       <div className="absolute inset-0 z-0 flex items-center justify-center pointer-events-none overflow-hidden mt-20">
-        <div className="relative w-full max-w-[800px] h-[800px] opacity-100 translate-x-1/3 translate-y-32 md:translate-y-0">
+        <div className="relative w-full max-w-[800px] h-[800px] opacity-100 translate-x-1/3 translate-y-32 md:translate-y-0 pointer-events-auto cursor-grab active:cursor-grabbing">
           <World data={sampleArcs} globeConfig={globeConfig} />
         </div>
       </div>
