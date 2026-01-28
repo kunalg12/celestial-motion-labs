@@ -9,6 +9,7 @@ import AboutSection from '@/components/AboutSection';
 import TestimonialsSection from '@/components/TestimonialsSection';
 import CTASection from '@/components/CTASection';
 import Footer from '@/components/Footer';
+import ScrollToTop from '@/components/ScrollToTop';
 
 const Index = () => {
   // Mouse parallax motion values lifted to top level for continuity
@@ -55,6 +56,9 @@ const Index = () => {
       
       {/* Footer */}
       <Footer />
+      
+      {/* Scroll to Top Navigation */}
+      <ScrollToTop />
     </div>
   );
 };
