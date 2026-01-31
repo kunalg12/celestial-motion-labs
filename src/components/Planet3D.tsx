@@ -1,6 +1,5 @@
 import { useRef, useMemo, Suspense } from 'react';
 import { Canvas, useFrame, useLoader } from '@react-three/fiber';
-import { OrbitControls, PerspectiveCamera } from '@react-three/drei';
 import * as THREE from 'three';
 import { MotionValue } from 'framer-motion';
 
@@ -63,12 +62,9 @@ const EarthMesh = ({ mouseX, mouseY }: EarthMeshProps) => {
   
   useFrame((state, delta) => {
     if (groupRef.current) {
-      // Mouse parallax - subtle addition to auto-rotation
-      const targetRotX = (mouseY?.get() ?? 0) * 0.05;
-      const targetRotY = (mouseX?.get() ?? 0) * 0.05;
-      
-      // We'll let OrbitControls handle the heavy lifting, 
-      // but keep a slight hint of mouse-follow if not dragging
+      // Mouse parallax
+      const targetRotX = (mouseY?.get() ?? 0) * 0.12;
+      const targetRotY = (mouseX?.get() ?? 0) * 0.08;
       groupRef.current.rotation.x = THREE.MathUtils.lerp(groupRef.current.rotation.x, targetRotX + 0.2, 0.02);
     }
     
@@ -161,14 +157,13 @@ interface Planet3DProps {
 const Planet3D = ({ mouseX, mouseY, className }: Planet3DProps) => {
   return (
     <div 
-      className={`absolute ${className ?? ''}`}
+      className={`absolute pointer-events-none ${className ?? ''}`}
       style={{
         right: '-18%',
         top: '50%',
         transform: 'translateY(-50%)',
         width: 'clamp(700px, 55vw, 1100px)',
         height: 'clamp(700px, 55vw, 1100px)',
-        cursor: 'grab',
       }}
     >
       <Canvas
@@ -183,15 +178,6 @@ const Planet3D = ({ mouseX, mouseY, className }: Planet3DProps) => {
         }}
         dpr={[1, 2]}
       >
-        <OrbitControls
-          enablePan={false}
-          enableZoom={false}
-          autoRotate={true}
-          autoRotateSpeed={0.5}
-          enableDamping={true}
-          dampingFactor={0.05}
-          rotateSpeed={0.5}
-        />
         {/* Ambient fill */}
         <ambientLight intensity={0.3} />
         

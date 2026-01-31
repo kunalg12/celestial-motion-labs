@@ -1,8 +1,6 @@
 import { motion, useScroll, useSpring, MotionValue } from 'framer-motion';
 import { useRef } from 'react';
 import { World } from '@/components/ui/globe';
-import Planet3D from './Planet3D';
-import { Meteors } from './ui/meteors';
 
 interface HeroSectionProps {
   mouseX: MotionValue<number>;
@@ -120,11 +118,9 @@ const HeroSection = ({ mouseX, mouseY }: HeroSectionProps) => {
       />
       
       <div className="absolute inset-0 z-0 flex items-center justify-center pointer-events-none overflow-hidden mt-20">
-        <Planet3D mouseX={mouseX} mouseY={mouseY} />
-      </div>
-
-      <div className="absolute inset-x-0 top-0 h-64 pointer-events-none">
-        <Meteors number={15} />
+        <div className="relative w-full max-w-[800px] h-[800px] opacity-100 translate-x-1/3 translate-y-32 md:translate-y-0 pointer-events-auto cursor-grab active:cursor-grabbing">
+          <World data={sampleArcs} globeConfig={globeConfig} />
+        </div>
       </div>
 
       {/* Content */}
