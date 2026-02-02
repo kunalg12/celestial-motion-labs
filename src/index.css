@@ -184,6 +184,11 @@
         hsl(var(--cosmic-deep)) 100%);
   }
 
+  .warp-content {
+    will-change: transform, filter;
+    transition: transform 0.3s ease-out;
+  }
+
   /* Cosmic Divider */
   .cosmic-divider {
     @apply h-px w-full;

@@ -10,6 +10,7 @@ import TestimonialsSection from '@/components/TestimonialsSection';
 import CTASection from '@/components/CTASection';
 import Footer from '@/components/Footer';
 import ScrollToTop from '@/components/ScrollToTop';
+import WarpDrive from '@/components/ui/WarpDrive';
 
 const Index = () => {
   // Mouse parallax motion values lifted to top level for continuity
@@ -59,6 +60,9 @@ const Index = () => {
       
       {/* Scroll to Top Navigation */}
       <ScrollToTop />
+
+      {/* Warp Drive / Hyperspace Effects */}
+      <WarpDrive />
     </div>
   );
 };
