@@ -1,5 +1,5 @@
 import { useMotionValue, useSpring } from 'framer-motion';
-import { useEffect } from 'react';
+import { useEffect, useState } from 'react';
 import StarField from '@/components/StarField';
 import Navbar from '@/components/Navbar';
 import HeroSection from '@/components/HeroSection';
@@ -10,12 +10,14 @@ import TestimonialsSection from '@/components/TestimonialsSection';
 import CTASection from '@/components/CTASection';
 import Footer from '@/components/Footer';
 import ScrollToTop from '@/components/ScrollToTop';
-import WarpDrive from '@/components/ui/WarpDrive';
+import ContactModal from '@/components/ContactModal';
 
 const Index = () => {
   // Mouse parallax motion values lifted to top level for continuity
   const mouseX = useSpring(useMotionValue(0), { stiffness: 50, damping: 20 });
   const mouseY = useSpring(useMotionValue(0), { stiffness: 50, damping: 20 });
+
+  const [isContactOpen, setIsContactOpen] = useState(false);
 
   useEffect(() => {
     const handleMouseMove = (e: MouseEvent) => {
@@ -35,7 +37,7 @@ const Index = () => {
       <StarField mouseX={mouseX} mouseY={mouseY} />
       
       {/* Navbar */}
-      <Navbar />
+      <Navbar onOpenContact={() => setIsContactOpen(true)} />
       
       {/* Hero Section - Accepts motion values for synchronized parallax */}
       <HeroSection mouseX={mouseX} mouseY={mouseY} />
@@ -53,7 +55,7 @@ const Index = () => {
       <TestimonialsSection />
       
       {/* CTA Section */}
-      <CTASection />
+      <CTASection onOpenContact={() => setIsContactOpen(true)} />
       
       {/* Footer */}
       <Footer />
@@ -61,8 +63,8 @@ const Index = () => {
       {/* Scroll to Top Navigation */}
       <ScrollToTop />
 
-      {/* Warp Drive / Hyperspace Effects */}
-      <WarpDrive />
+      {/* Contact Modal */}
+      <ContactModal isOpen={isContactOpen} onClose={() => setIsContactOpen(false)} />
     </div>
   );
 };

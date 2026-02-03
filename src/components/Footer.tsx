@@ -40,7 +40,7 @@ const Footer = () => {
               <div className="w-8 h-8 rounded-full bg-primary/20 border border-primary/40 flex items-center justify-center">
                 <div className="w-3 h-3 rounded-full bg-primary" />
               </div>
-              <span className="font-display font-semibold text-lg text-foreground">Orbitix</span>
+              <span className="font-display font-semibold text-lg text-foreground">Celestial Motion Labs</span>
             </motion.div>
             <p className="text-muted-foreground text-sm leading-relaxed max-w-xs mb-6">
               Crafting digital universes that inspire, engage, and transform businesses worldwide.
@@ -85,7 +85,7 @@ const Footer = () => {
 
         {/* Bottom Row */}
         <div className="flex flex-col md:flex-row justify-between items-center gap-4 text-sm text-muted-foreground">
-          <p>© {currentYear} Orbitix. All rights reserved.</p>
+          <p>© {currentYear} Celestial Motion Labs. All rights reserved.</p>
           <div className="flex gap-6">
             <a href="#" className="hover:text-primary transition-colors">Privacy Policy</a>
             <a href="#" className="hover:text-primary transition-colors">Terms of Service</a>

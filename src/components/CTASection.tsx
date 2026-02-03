@@ -2,7 +2,11 @@ import { motion, useInView, useMotionValue, useSpring, useTransform } from 'fram
 import { useRef, useState } from 'react';
 import { Sparkles } from 'lucide-react';
 
-const CTASection = () => {
+interface CTASectionProps {
+  onOpenContact: () => void;
+}
+
+const CTASection = ({ onOpenContact }: CTASectionProps) => {
   const containerRef = useRef<HTMLDivElement>(null);
   const isInView = useInView(containerRef, { once: true, margin: '-100px' });
   const [isHovered, setIsHovered] = useState(false);
@@ -220,6 +224,7 @@ const CTASection = () => {
             transition={{ duration: 0.8, delay: 0.5 }}
           >
             <motion.button
+              onClick={onOpenContact}
               className="relative bg-primary text-primary-foreground px-10 py-4 rounded-xl font-semibold text-lg overflow-hidden group"
               whileHover={{ scale: 1.02 }}
               whileTap={{ scale: 0.98 }}
@@ -244,6 +249,7 @@ const CTASection = () => {
               />
             </motion.button>
             <motion.button
+              onClick={onOpenContact}
               className="px-10 py-4 rounded-xl font-semibold text-lg border border-border text-foreground relative overflow-hidden group"
               whileHover={{ scale: 1.02, borderColor: 'hsla(199, 89%, 48%, 0.5)' }}
               whileTap={{ scale: 0.98 }}

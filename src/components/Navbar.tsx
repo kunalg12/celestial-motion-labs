@@ -2,7 +2,11 @@ import { useState, useEffect, useRef } from 'react';
 import { motion, AnimatePresence, useScroll, useTransform, useMotionValue, useSpring } from 'framer-motion';
 import { Menu, X } from 'lucide-react';
 
-const Navbar = () => {
+interface NavbarProps {
+  onOpenContact: () => void;
+}
+
+const Navbar = ({ onOpenContact }: NavbarProps) => {
   const [isScrolled, setIsScrolled] = useState(false);
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
   const navRef = useRef<HTMLElement>(null);
@@ -39,7 +43,6 @@ const Navbar = () => {
     { label: 'Services', href: '#services' },
     { label: 'Work', href: '#work' },
     { label: 'About', href: '#about' },
-    { label: 'Contact', href: '#contact' },
   ];
 
   return (
@@ -119,7 +122,8 @@ const Navbar = () => {
                 style={{ transform: 'scale(1.3)' }}
               />
             </motion.div>
-            <span className="font-display font-semibold text-lg text-foreground">Orbitix</span>
+            <span className="font-display font-semibold text-lg text-foreground hidden sm:block">Celestial Motion Labs</span>
+            <span className="font-display font-semibold text-lg text-foreground sm:hidden">CML</span>
           </motion.a>
 
           {/* Desktop Links */}
@@ -147,6 +151,7 @@ const Navbar = () => {
 
           {/* CTA Button */}
           <motion.button
+            onClick={onOpenContact}
             className="hidden md:block relative z-10 bg-primary text-primary-foreground px-5 py-2.5 rounded-lg font-medium text-sm overflow-hidden group"
             initial={{ opacity: 0, scale: 0.9 }}
             animate={{ opacity: 1, scale: 1 }}
@@ -231,6 +236,10 @@ const Navbar = () => {
                 </motion.a>
               ))}
               <motion.button 
+                onClick={() => {
+                  setIsMobileMenuOpen(false);
+                  onOpenContact();
+                }}
                 className="glow-button bg-primary text-primary-foreground px-5 py-3 rounded-lg font-medium mt-4"
                 initial={{ opacity: 0, y: 10 }}
                 animate={{ opacity: 1, y: 0 }}

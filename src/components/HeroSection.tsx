@@ -1,5 +1,5 @@
 import { motion, useScroll, useSpring, MotionValue } from 'framer-motion';
-import { useRef } from 'react';
+import { useRef, useMemo } from 'react';
 import { World } from '@/components/ui/globe';
 
 interface HeroSectionProps {
@@ -18,7 +18,7 @@ const HeroSection = ({ mouseX, mouseY }: HeroSectionProps) => {
   // Smooth spring animations for scroll - softer physics for less jitter
   const smoothProgress = useSpring(scrollYProgress, { stiffness: 60, damping: 20, mass: 0.5 });
 
-  const globeConfig = {
+  const globeConfig = useMemo(() => ({
     pointSize: 4,
     globeColor: "#062056",
     showAtmosphere: true,
@@ -39,10 +39,10 @@ const HeroSection = ({ mouseX, mouseY }: HeroSectionProps) => {
     initialPosition: { lat: 22.3193, lng: 114.1694 },
     autoRotate: true,
     autoRotateSpeed: 0.5,
-  };
+  }), []);
   
   const colors = ["#06b6d4", "#3b82f6", "#6366f1"];
-  const sampleArcs = [
+  const sampleArcs = useMemo(() => [
     { order: 1, startLat: -19.885592, startLng: -43.951191, endLat: -22.9068, endLng: -43.1729, arcAlt: 0.1, color: colors[0] },
     { order: 1, startLat: 28.6139, startLng: 77.209, endLat: 3.139, endLng: 101.6869, arcAlt: 0.2, color: colors[1] },
     { order: 1, startLat: -19.885592, startLng: -43.951191, endLat: -1.303396, endLng: 36.852443, arcAlt: 0.5, color: colors[2] },
@@ -83,7 +83,7 @@ const HeroSection = ({ mouseX, mouseY }: HeroSectionProps) => {
     { order: 13, startLat: 11.986597, startLng: 8.571831, endLat: 35.6762, endLng: 139.6503, arcAlt: 0.3, color: colors[1] },
     { order: 13, startLat: -22.9068, startLng: -43.1729, endLat: -34.6037, endLng: -58.3816, arcAlt: 0.1, color: colors[2] },
     { order: 14, startLat: -33.936138, startLng: 18.436529, endLat: 21.395643, endLng: 39.883798, arcAlt: 0.3, color: colors[0] },
-  ];
+  ], []);
 
   const textVariants = {
     hidden: { opacity: 0, y: 60, scale: 0.95 },

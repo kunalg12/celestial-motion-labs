@@ -6,7 +6,7 @@ import { Meteors } from './ui/meteors';
 const testimonials = [
   {
     id: 1,
-    content: "Orbitix transformed our digital presence entirely. Their attention to detail and innovative approach exceeded every expectation we had.",
+    content: "Celestial Motion Labs transformed our digital presence entirely. Their attention to detail and innovative approach exceeded every expectation we had.",
     author: "Sarah Chen",
     role: "CEO, TechNova",
   },

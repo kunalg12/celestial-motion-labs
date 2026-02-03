@@ -1,47 +1,44 @@
-import { motion, useInView } from 'framer-motion';
-import { useRef, useState } from 'react';
+import { motion, useInView, AnimatePresence } from 'framer-motion';
+import { useRef, useState, useEffect } from 'react';
 import { ArrowUpRight } from 'lucide-react';
-import svsImage from '@/assets/svs-nursing.png';
-import chaitanyaImage from '@/assets/chaitanya-nursing.png';
-import santEknathImage from '@/assets/sant-eknath.png';
+import { fetchProjects, Project } from '@/data/projects';
 
-const projects = [
-  {
-    id: 1,
-    title: 'Chaitanya Nursing School',
-    category: 'Institutional Portal',
-    description: 'Empowering future healthcare leaders with excellence in nursing education and modern facilities.',
-    image: chaitanyaImage,
-    color: 'from-emerald-600/40 to-teal-400/40',
-    glow: 'hsla(168, 80%, 40%, 0.3)',
-    link: 'https://www.cnsgnmnursing.org/',
-  },
-  {
-    id: 2,
-    title: 'Sant Eknath Institute',
-    category: 'Nursing Education',
-    description: 'Excellence in nursing education with INC approval and industry-leading clinical training.',
-    image: santEknathImage,
-    color: 'from-orange-600/40 to-rose-400/40',
-    glow: 'hsla(12, 80%, 40%, 0.3)',
-    link: 'https://www.seinursing.org/',
-  },
-  {
-    id: 3,
-    title: 'Swami Vivekanand Nursing',
-    category: 'Nursing Education Platform',
-    description: 'A premier institute for GNM nursing education, shaping the future of healthcare professionals.',
-    image: svsImage,
-    color: 'from-blue-600/40 to-indigo-400/40',
-    glow: 'hsla(199, 89%, 48%, 0.3)',
-    link: 'https://svsnursing.org/',
-  },
-];
+const ProjectSkeleton = ({ index }: { index: number }) => (
+  <div 
+    className={`relative rounded-3xl overflow-hidden bg-secondary/20 border border-white/5 ${
+      index === 0 ? 'lg:col-span-2 aspect-[2/1]' : 'aspect-[4/3]'
+    }`}
+  >
+    <div className="absolute inset-0 bg-gradient-to-r from-transparent via-white/5 to-transparent skeleton-shimmer" />
+    
+    <div className="absolute bottom-0 left-0 right-0 p-8 md:p-10 space-y-4">
+      <div className="h-4 w-32 bg-white/10 rounded animate-pulse" />
+      <div className="h-8 w-2/3 bg-white/10 rounded animate-pulse" />
+      <div className="h-16 w-full bg-white/10 rounded animate-pulse" />
+      <div className="h-12 w-40 bg-white/10 rounded-xl animate-pulse mt-4" />
+    </div>
+  </div>
+);
 
 const ProjectsSection = () => {
   const containerRef = useRef<HTMLDivElement>(null);
   const isInView = useInView(containerRef, { once: true, margin: '-100px' });
   const [hoveredId, setHoveredId] = useState<number | null>(null);
+  const [projects, setProjects] = useState<Project[]>([]);
+  const [isLoading, setIsLoading] = useState(true);
+
+  useEffect(() => {
+    const loadProjects = async () => {
+      // Start fetching when the component mounts
+      // We could also check `isInView` to fetch only when scrolled to, 
+      // but fetching on mount ensures data is ready sooner.
+      const data = await fetchProjects();
+      setProjects(data);
+      setIsLoading(false);
+    };
+
+    loadProjects();
+  }, []);
 
   const containerVariants = {
     hidden: {},
@@ -74,6 +71,15 @@ const ProjectsSection = () => {
 
   return (
     <section id="work" className="relative py-32">
+      <style>{`
+        @keyframes shimmer {
+          0% { transform: translateX(-100%); }
+          100% { transform: translateX(100%); }
+        }
+        .skeleton-shimmer {
+          animation: shimmer 2s infinite linear;
+        }
+      `}</style>
       <div ref={containerRef} className="container mx-auto px-6">
         <motion.div
           initial={{ opacity: 0, y: 40 }}
@@ -117,143 +123,162 @@ const ProjectsSection = () => {
         </motion.div>
 
         {/* Projects Grid */}
-        <motion.div 
-          className="grid grid-cols-1 lg:grid-cols-2 gap-8"
-          variants={containerVariants}
-          initial="hidden"
-          animate={isInView ? "visible" : "hidden"}
-        >
-          {projects.map((project, index) => (
-            <motion.div
-              key={project.id}
-              variants={cardVariants}
-              className={`group relative rounded-3xl overflow-hidden ${
-                index === 0 ? 'lg:col-span-2 aspect-[2/1]' : 'aspect-[4/3]'
-              }`}
-              onMouseEnter={() => setHoveredId(project.id)}
-              onMouseLeave={() => setHoveredId(null)}
-              whileHover={{ scale: 1.01 }}
-              transition={{ duration: 0.4 }}
-            >
-              {/* Background Decoration */}
-              <div className="absolute inset-0">
-                <motion.img
-                  src={project.image}
-                  alt={project.title}
-                  className="w-full h-full object-cover opacity-80 group-hover:opacity-100 transition-opacity duration-700"
-                  animate={{ 
-                    scale: hoveredId === project.id ? 1.05 : 1,
-                  }}
-                  transition={{ duration: 0.7, ease: [0.25, 0.46, 0.45, 0.94] }}
-                />
-                <div className={`absolute inset-0 bg-gradient-to-t ${project.color} opacity-90 group-hover:opacity-80 transition-opacity duration-500`} />
-                
-                {/* Animated Light Streaks */}
-                <motion.div 
-                  className="absolute -inset-[100%] opacity-30 mix-blend-overlay"
-                  animate={{ 
-                    rotate: [0, 90, 180, 270, 360],
-                  }}
-                  transition={{ 
-                    duration: 20 + project.id * 5, 
-                    repeat: Infinity, 
-                    ease: 'linear' 
-                  }}
-                  style={{
-                    background: `radial-gradient(circle at center, ${project.glow} 0%, transparent 70%)`,
-                  }}
-                />
-              </div>
-
+        <div className="min-h-[600px]">
+          <AnimatePresence mode="wait">
+            {isLoading ? (
               <motion.div 
-                className="absolute inset-0 bg-gradient-to-t from-cosmic-deep via-cosmic-deep/60 to-transparent"
-                animate={{ 
-                  opacity: hoveredId === project.id ? 0.95 : 0.85,
-                }}
-                transition={{ duration: 0.3 }}
-              />
-
-              {/* Hover glow */}
-              <motion.div
-                className="absolute inset-0 pointer-events-none"
-                animate={{
-                  boxShadow: hoveredId === project.id 
-                    ? 'inset 0 0 60px hsla(199, 89%, 48%, 0.1)' 
-                    : 'inset 0 0 0 transparent',
-                }}
-                transition={{ duration: 0.3 }}
-              />
-
-              {/* Content */}
-              <div className="relative h-full flex flex-col justify-end p-8 md:p-10">
-                <motion.div
-                  animate={{ 
-                    y: hoveredId === project.id ? -15 : 0,
-                  }}
-                  transition={{ duration: 0.4, ease: [0.25, 0.46, 0.45, 0.94] }}
-                >
-                  <motion.span 
-                    className="text-sm text-primary font-medium mb-2 block"
-                    animate={{
-                      opacity: hoveredId === project.id ? 1 : 0.8,
-                    }}
-                  >
-                    {project.category}
-                  </motion.span>
-                  <h3 className="font-display text-2xl md:text-3xl font-bold text-foreground mb-2">
-                    {project.title}
-                  </h3>
-                  <p className="text-muted-foreground max-w-md">
-                    {project.description}
-                  </p>
-                </motion.div>
-
-                {/* Hover Button */}
-                <motion.div
-                  initial={{ opacity: 0, y: 30 }}
-                  animate={{ 
-                    opacity: hoveredId === project.id ? 1 : 0,
-                    y: hoveredId === project.id ? 0 : 30,
-                  }}
-                  transition={{ duration: 0.4, ease: [0.25, 0.46, 0.45, 0.94] }}
-                  className="mt-6"
-                >
-                  <motion.a 
-                    href={project.link}
-                    target="_blank"
-                    rel="noopener noreferrer"
-                    className="inline-flex items-center gap-2 px-6 py-3 rounded-xl bg-primary text-primary-foreground font-medium"
-                    whileHover={{ scale: 1.02 }}
-                    whileTap={{ scale: 0.98 }}
-                  >
-                    Visit Website <ArrowUpRight className="w-4 h-4" />
-                  </motion.a>
-                </motion.div>
-              </div>
-
-              {/* Corner Decoration */}
-              <motion.div 
-                className="absolute top-6 right-6 w-12 h-12 rounded-full flex items-center justify-center"
-                style={{
-                  background: 'hsla(224, 0%, 6%, 0.5)',
-                  border: '1px solid hsla(217, 0%, 30%, 0.3)',
-                }}
-                animate={{
-                  borderColor: hoveredId === project.id 
-                    ? 'hsla(199, 89%, 48%, 0.5)' 
-                    : 'hsla(217, 33%, 30%, 0.3)',
-                  scale: hoveredId === project.id ? 1.1 : 1,
-                }}
-                transition={{ duration: 0.3 }}
+                key="loader"
+                className="grid grid-cols-1 lg:grid-cols-2 gap-8"
+                initial={{ opacity: 0 }}
+                animate={{ opacity: 1 }}
+                exit={{ opacity: 0 }}
               >
-                <ArrowUpRight className="w-5 h-5 text-foreground/60 group-hover:text-primary transition-colors" />
+                {[1, 2, 3].map((_, index) => (
+                  <ProjectSkeleton key={index} index={index} />
+                ))}
               </motion.div>
-            </motion.div>
-          ))}
-        </motion.div>
+            ) : (
+              <motion.div 
+                key="grid"
+                className="grid grid-cols-1 lg:grid-cols-2 gap-8"
+                variants={containerVariants}
+                initial="hidden"
+                animate={isInView ? "visible" : "hidden"}
+              >
+                {projects.map((project, index) => (
+                  <motion.div
+                    key={project.id}
+                    variants={cardVariants}
+                    className={`group relative rounded-3xl overflow-hidden ${
+                      index === 0 ? 'lg:col-span-2 aspect-[2/1]' : 'aspect-[4/3]'
+                    }`}
+                    onMouseEnter={() => setHoveredId(project.id)}
+                    onMouseLeave={() => setHoveredId(null)}
+                    whileHover={{ scale: 1.01 }}
+                    transition={{ duration: 0.4 }}
+                  >
+                    {/* Background Decoration */}
+                    <div className="absolute inset-0">
+                      <motion.img
+                        src={project.image}
+                        alt={project.title}
+                        className="w-full h-full object-cover opacity-80 group-hover:opacity-100 transition-opacity duration-700"
+                        animate={{ 
+                          scale: hoveredId === project.id ? 1.05 : 1,
+                        }}
+                        transition={{ duration: 0.7, ease: [0.25, 0.46, 0.45, 0.94] }}
+                      />
+                      <div className={`absolute inset-0 bg-gradient-to-t ${project.color} opacity-90 group-hover:opacity-80 transition-opacity duration-500`} />
+                      
+                      {/* Animated Light Streaks */}
+                      <motion.div 
+                        className="absolute -inset-[100%] opacity-30 mix-blend-overlay"
+                        animate={{ 
+                          rotate: [0, 90, 180, 270, 360],
+                        }}
+                        transition={{ 
+                          duration: 20 + project.id * 5, 
+                          repeat: Infinity, 
+                          ease: 'linear' 
+                        }}
+                        style={{
+                          background: `radial-gradient(circle at center, ${project.glow} 0%, transparent 70%)`,
+                        }}
+                      />
+                    </div>
+
+                    <motion.div 
+                      className="absolute inset-0 bg-gradient-to-t from-cosmic-deep via-cosmic-deep/60 to-transparent"
+                      animate={{ 
+                        opacity: hoveredId === project.id ? 0.95 : 0.85,
+                      }}
+                      transition={{ duration: 0.3 }}
+                    />
+
+                    {/* Hover glow */}
+                    <motion.div
+                      className="absolute inset-0 pointer-events-none"
+                      animate={{
+                        boxShadow: hoveredId === project.id 
+                          ? 'inset 0 0 60px hsla(199, 89%, 48%, 0.1)' 
+                          : 'inset 0 0 0 transparent',
+                      }}
+                      transition={{ duration: 0.3 }}
+                    />
+
+                    {/* Content */}
+                    <div className="relative h-full flex flex-col justify-end p-8 md:p-10">
+                      <motion.div
+                        animate={{ 
+                          y: hoveredId === project.id ? -15 : 0,
+                        }}
+                        transition={{ duration: 0.4, ease: [0.25, 0.46, 0.45, 0.94] }}
+                      >
+                        <motion.span 
+                          className="text-sm text-primary font-medium mb-2 block"
+                          animate={{
+                            opacity: hoveredId === project.id ? 1 : 0.8,
+                          }}
+                        >
+                          {project.category}
+                        </motion.span>
+                        <h3 className="font-display text-2xl md:text-3xl font-bold text-foreground mb-2">
+                          {project.title}
+                        </h3>
+                        <p className="text-muted-foreground max-w-md">
+                          {project.description}
+                        </p>
+                      </motion.div>
+
+                      {/* Hover Button */}
+                      <motion.div
+                        initial={{ opacity: 0, y: 30 }}
+                        animate={{ 
+                          opacity: hoveredId === project.id ? 1 : 0,
+                          y: hoveredId === project.id ? 0 : 30,
+                        }}
+                        transition={{ duration: 0.4, ease: [0.25, 0.46, 0.45, 0.94] }}
+                        className="mt-6"
+                      >
+                        <motion.a 
+                          href={project.link}
+                          target="_blank"
+                          rel="noopener noreferrer"
+                          className="inline-flex items-center gap-2 px-6 py-3 rounded-xl bg-primary text-primary-foreground font-medium"
+                          whileHover={{ scale: 1.02 }}
+                          whileTap={{ scale: 0.98 }}
+                        >
+                          Visit Website <ArrowUpRight className="w-4 h-4" />
+                        </motion.a>
+                      </motion.div>
+                    </div>
+
+                    {/* Corner Decoration */}
+                    <motion.div 
+                      className="absolute top-6 right-6 w-12 h-12 rounded-full flex items-center justify-center"
+                      style={{
+                        background: 'hsla(224, 0%, 6%, 0.5)',
+                        border: '1px solid hsla(217, 0%, 30%, 0.3)',
+                      }}
+                      animate={{
+                        borderColor: hoveredId === project.id 
+                          ? 'hsla(199, 89%, 48%, 0.5)' 
+                          : 'hsla(217, 33%, 30%, 0.3)',
+                        scale: hoveredId === project.id ? 1.1 : 1,
+                      }}
+                      transition={{ duration: 0.3 }}
+                    >
+                      <ArrowUpRight className="w-5 h-5 text-foreground/60 group-hover:text-primary transition-colors" />
+                    </motion.div>
+                  </motion.div>
+                ))}
+              </motion.div>
+            )}
+          </AnimatePresence>
+        </div>
       </div>
     </section>
   );
 };
-
+  
 export default ProjectsSection;
