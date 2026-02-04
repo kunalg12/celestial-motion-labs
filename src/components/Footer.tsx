@@ -40,7 +40,7 @@ const Footer = () => {
               <div className="w-8 h-8 rounded-full bg-primary/20 border border-primary/40 flex items-center justify-center">
                 <div className="w-3 h-3 rounded-full bg-primary" />
               </div>
-              <span className="font-display font-semibold text-lg text-foreground">Orbitix Build MVP</span>
+              <span className="font-display font-semibold text-lg text-foreground">Orbitix</span>
             </motion.div>
             <p className="text-muted-foreground text-sm leading-relaxed max-w-xs mb-6">
               Crafting digital universes that inspire, engage, and transform businesses worldwide.

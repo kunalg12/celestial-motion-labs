@@ -122,7 +122,7 @@ const Navbar = ({ onOpenContact }: NavbarProps) => {
                 style={{ transform: 'scale(1.3)' }}
               />
             </motion.div>
-            <span className="font-display font-semibold text-lg text-foreground hidden sm:block">Orbitix Build MVP</span>
+            <span className="font-display font-semibold text-lg text-foreground hidden sm:block">Orbitix6</span>
             <span className="font-display font-semibold text-lg text-foreground sm:hidden">Orbitix</span>
           </motion.a>
 
