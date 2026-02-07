@@ -51,8 +51,8 @@ const Footer = () => {
                 <motion.a
                   key={index}
                   href={social.href}
-                  className="w-10 h-10 rounded-full bg-secondary/50 flex items-center justify-center text-muted-foreground hover:text-primary hover:bg-primary/10 transition-colors"
-                  whileHover={{ y: -2 }}
+                  className="w-10 h-10 rounded-full border border-white/10 flex items-center justify-center text-muted-foreground hover:text-primary hover:bg-white/5 hover:border-primary/40 transition-all backdrop-blur-sm"
+                  whileHover={{ y: -3, boxShadow: '0 0 15px hsla(199, 89%, 48%, 0.3)' }}
                 >
                   <social.icon className="w-4 h-4" />
                 </motion.a>

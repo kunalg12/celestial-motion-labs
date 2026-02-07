@@ -96,12 +96,7 @@ const TestimonialsSection = () => {
             <motion.div
               key={testimonial.id}
               variants={cardVariants}
-              className="rounded-2xl p-8 relative group"
-              style={{
-                background: 'hsla(224, 0%, 6%, 0.6)',
-                backdropFilter: 'blur(10px)',
-                border: '1px solid hsla(217, 0%, 20%, 0.3)',
-              }}
+              className="glass-card rounded-2xl p-8 relative group"
               whileHover={{ 
                 y: -8,
                 transition: { duration: 0.3 },
