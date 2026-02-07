@@ -164,12 +164,7 @@ const ServicesSection = () => {
                 y: -12, 
                 transition: { duration: 0.3, ease: 'easeOut' } 
               }}
-              className="group relative rounded-2xl p-8 cursor-pointer overflow-hidden"
-              style={{
-                background: 'hsla(224, 0%, 6%, 0.6)',
-                backdropFilter: 'blur(10px)',
-                border: '1px solid hsla(217, 0%, 20%, 0.3)',
-              }}
+              className="glass-card group relative rounded-2xl p-8 cursor-pointer overflow-hidden"
             >
               {/* Hover glow background */}
               <motion.div

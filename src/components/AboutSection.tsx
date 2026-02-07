@@ -178,12 +178,7 @@ const AboutSection = () => {
                   y: -8, 
                   transition: { duration: 0.3 } 
                 }}
-                className="rounded-2xl p-8 text-center group cursor-default relative overflow-hidden"
-                style={{
-                  background: 'hsla(224, 0%, 6%, 0.6)',
-                  backdropFilter: 'blur(10px)',
-                  border: '1px solid hsla(217, 0%, 20%, 0.3)',
-                }}
+                className="glass-card rounded-2xl p-8 text-center group cursor-default relative overflow-hidden"
               >
                 {/* Hover glow */}
                 <motion.div

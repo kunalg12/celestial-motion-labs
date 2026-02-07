@@ -185,24 +185,21 @@ const HeroSection = ({ mouseX, mouseY }: HeroSectionProps) => {
             className="flex flex-wrap gap-4"
           >
             <motion.button
-              className="glow-button bg-primary text-primary-foreground px-8 py-4 rounded-xl font-semibold text-lg relative overflow-hidden group"
+              className="bg-primary text-primary-foreground px-8 py-4 rounded-xl font-semibold text-lg relative overflow-hidden group shadow-lg shadow-primary/25"
               whileHover={{ scale: 1.02 }}
               whileTap={{ scale: 0.98 }}
-              onHoverStart={() => {
-                // Could trigger nearby animation effects
-              }}
             >
               <span className="relative z-10">Start Your Journey</span>
               <motion.div
-                className="absolute inset-0 bg-gradient-to-r from-primary via-star-glow to-primary"
+                className="absolute inset-0 bg-gradient-to-r from-transparent via-white/20 to-transparent"
                 initial={{ x: '-100%' }}
                 whileHover={{ x: '100%' }}
-                transition={{ duration: 0.6 }}
+                transition={{ duration: 0.5 }}
               />
             </motion.button>
             <motion.button
-              className="px-8 py-4 rounded-xl font-semibold text-lg border border-border text-foreground hover:border-primary/50 transition-all duration-300 relative overflow-hidden"
-              whileHover={{ scale: 1.02, backgroundColor: 'hsla(217, 33%, 17%, 0.5)' }}
+              className="px-8 py-4 rounded-xl font-semibold text-lg border border-white/10 text-foreground hover:bg-white/5 transition-all duration-300 relative overflow-hidden backdrop-blur-sm"
+              whileHover={{ scale: 1.02, borderColor: 'hsla(199, 89%, 48%, 0.4)' }}
               whileTap={{ scale: 0.98 }}
             >
               Explore Our Work

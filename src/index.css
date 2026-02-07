@@ -97,10 +97,22 @@
 
   /* Glassmorphic Card */
   .glass-card {
-    background: var(--glass-bg);
-    backdrop-filter: blur(var(--glass-blur));
-    -webkit-backdrop-filter: blur(var(--glass-blur));
-    border: 1px solid var(--glass-border);
+    background: hsla(224, 0%, 6%, 0.6);
+    backdrop-filter: blur(20px);
+    -webkit-backdrop-filter: blur(20px);
+    border: 1px solid hsla(217, 0%, 30%, 0.2);
+    box-shadow: 0 4px 30px hsla(0, 0%, 0%, 0.3);
+  }
+
+  /* Deeper Glass Panel (for Modals/Dropdowns) */
+  .glass-panel {
+    background: hsla(224, 0%, 6%, 0.85);
+    backdrop-filter: blur(40px);
+    -webkit-backdrop-filter: blur(40px);
+    border: 1px solid hsla(217, 0%, 30%, 0.3);
+    box-shadow:
+      0 20px 50px -10px hsla(0, 0%, 0%, 0.7),
+      inset 0 1px 0 hsla(217, 33%, 50%, 0.1);
   }
 
   /* Orbital Ring Animation */
