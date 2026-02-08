@@ -5,9 +5,10 @@ import { World } from '@/components/ui/globe';
 interface HeroSectionProps {
   mouseX: MotionValue<number>;
   mouseY: MotionValue<number>;
+  onOpenContact: () => void;
 }
 
-const HeroSection = ({ mouseX, mouseY }: HeroSectionProps) => {
+const HeroSection = ({ mouseX, mouseY, onOpenContact }: HeroSectionProps) => {
   const containerRef = useRef<HTMLDivElement>(null);
   
   const { scrollYProgress } = useScroll({
@@ -185,6 +186,7 @@ const HeroSection = ({ mouseX, mouseY }: HeroSectionProps) => {
             className="flex flex-wrap gap-4"
           >
             <motion.button
+              onClick={onOpenContact}
               className="bg-primary text-primary-foreground px-8 py-4 rounded-xl font-semibold text-lg relative overflow-hidden group shadow-lg shadow-primary/25"
               whileHover={{ scale: 1.02 }}
               whileTap={{ scale: 0.98 }}
@@ -198,6 +200,15 @@ const HeroSection = ({ mouseX, mouseY }: HeroSectionProps) => {
               />
             </motion.button>
             <motion.button
+              onClick={() => {
+                const workSection = document.getElementById('work');
+                if (workSection) {
+                  window.scrollTo({
+                    top: workSection.offsetTop - 100,
+                    behavior: 'smooth'
+                  });
+                }
+              }}
               className="px-8 py-4 rounded-xl font-semibold text-lg border border-white/10 text-foreground hover:bg-white/5 transition-all duration-300 relative overflow-hidden backdrop-blur-sm"
               whileHover={{ scale: 1.02, borderColor: 'hsla(199, 89%, 48%, 0.4)' }}
               whileTap={{ scale: 0.98 }}

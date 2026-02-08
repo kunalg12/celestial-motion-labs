@@ -11,6 +11,10 @@ import CTASection from '@/components/CTASection';
 import Footer from '@/components/Footer';
 import ScrollToTop from '@/components/ScrollToTop';
 import ContactModal from '@/components/ContactModal';
+import CursorTrail from '@/components/CursorTrail';
+import ScrollProgress from '@/components/ScrollProgress';
+import StatsSection from '@/components/StatsSection';
+import FloatingElements from '@/components/FloatingElements';
 
 const Index = () => {
   // Mouse parallax motion values lifted to top level for continuity
@@ -33,6 +37,12 @@ const Index = () => {
 
   return (
     <div className="min-h-screen bg-background text-foreground overflow-x-hidden">
+      {/* Floating Background Elements - DISABLED FOR TESTING */}
+      {/* <FloatingElements /> */}
+      
+      {/* Cursor Trail Effect - DISABLED FOR TESTING */}
+      {/* <CursorTrail /> */}
+      
       {/* Star Field Background - Lifted for continuity */}
       <StarField mouseX={mouseX} mouseY={mouseY} />
       
@@ -40,10 +50,13 @@ const Index = () => {
       <Navbar onOpenContact={() => setIsContactOpen(true)} />
       
       {/* Hero Section - Accepts motion values for synchronized parallax */}
-      <HeroSection mouseX={mouseX} mouseY={mouseY} />
+      <HeroSection mouseX={mouseX} mouseY={mouseY} onOpenContact={() => setIsContactOpen(true)} />
       
       {/* Services Section */}
       <ServicesSection />
+      
+      {/* Stats Section - DISABLED FOR TESTING */}
+      {/* <StatsSection /> */}
       
       {/* Projects Section */}
       <ProjectsSection />
@@ -62,6 +75,9 @@ const Index = () => {
       
       {/* Scroll to Top Navigation */}
       <ScrollToTop />
+      
+      {/* Scroll Progress Indicator - DISABLED FOR TESTING */}
+      {/* <ScrollProgress /> */}
 
       {/* Contact Modal */}
       <ContactModal isOpen={isContactOpen} onClose={() => setIsContactOpen(false)} />
