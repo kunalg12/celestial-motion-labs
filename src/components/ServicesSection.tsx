@@ -178,9 +178,23 @@ const ServicesSection = () => {
               <motion.div
                 className="absolute inset-0 rounded-2xl opacity-0 group-hover:opacity-100 transition-opacity duration-300"
                 style={{
-                  border: '1px solid hsla(199, 89%, 48%, 0.3)',
+                  border: '1px solid hsla(199, 89%, 48%, 0.4)',
+                  boxShadow: 'inset 0 0 20px hsla(199, 89%, 48%, 0.1)',
                 }}
               />
+
+              {/* Advanced Glass Shimmer */}
+              <motion.div
+                className="absolute inset-0 pointer-events-none overflow-hidden rounded-2xl"
+                initial={{ x: '-100%' }}
+                whileHover={{ x: '200%' }}
+                transition={{ duration: 1.2, ease: "easeInOut" }}
+              >
+                <div 
+                  className="w-1/2 h-full bg-gradient-to-r from-transparent via-white/10 to-transparent skew-x-[30deg]" 
+                  style={{ filter: 'blur(20px)' }}
+                />
+              </motion.div>
 
               <motion.div
                 className="relative w-14 h-14 rounded-xl flex items-center justify-center mb-6"

@@ -71,9 +71,10 @@ const Footer = () => {
                   <li key={item}>
                     <a
                       href="#"
-                      className="text-sm text-muted-foreground hover:text-primary transition-colors"
+                      className="text-sm text-muted-foreground hover:text-white transition-colors relative group/link"
                     >
                       {item}
+                      <span className="absolute -bottom-1 left-0 w-0 h-px bg-primary transition-all duration-300 group-hover/link:w-full" />
                     </a>
                   </li>
                 ))}

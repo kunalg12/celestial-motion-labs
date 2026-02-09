@@ -15,6 +15,7 @@ import CursorTrail from '@/components/CursorTrail';
 import ScrollProgress from '@/components/ScrollProgress';
 import StatsSection from '@/components/StatsSection';
 import FloatingElements from '@/components/FloatingElements';
+import LoadingScreen from '@/components/LoadingScreen';
 
 const Index = () => {
   // Mouse parallax motion values lifted to top level for continuity
@@ -37,11 +38,14 @@ const Index = () => {
 
   return (
     <div className="min-h-screen bg-background text-foreground overflow-x-hidden">
-      {/* Floating Background Elements - DISABLED FOR TESTING */}
-      {/* <FloatingElements /> */}
+      {/* Loading Screen Overlay */}
+      <LoadingScreen />
+
+      {/* Floating Background Elements */}
+      <FloatingElements />
       
-      {/* Cursor Trail Effect - DISABLED FOR TESTING */}
-      {/* <CursorTrail /> */}
+      {/* Cursor Trail Effect */}
+      <CursorTrail />
       
       {/* Star Field Background - Lifted for continuity */}
       <StarField mouseX={mouseX} mouseY={mouseY} />
@@ -55,8 +59,8 @@ const Index = () => {
       {/* Services Section */}
       <ServicesSection />
       
-      {/* Stats Section - DISABLED FOR TESTING */}
-      {/* <StatsSection /> */}
+      {/* Stats Section */}
+      <StatsSection />
       
       {/* Projects Section */}
       <ProjectsSection />
@@ -76,8 +80,8 @@ const Index = () => {
       {/* Scroll to Top Navigation */}
       <ScrollToTop />
       
-      {/* Scroll Progress Indicator - DISABLED FOR TESTING */}
-      {/* <ScrollProgress /> */}
+      {/* Scroll Progress Indicator */}
+      <ScrollProgress />
 
       {/* Contact Modal */}
       <ContactModal isOpen={isContactOpen} onClose={() => setIsContactOpen(false)} />

@@ -1,4 +1,4 @@
-import { motion, useInView, useMotionValue, useSpring, useTransform } from 'framer-motion';
+import { motion, AnimatePresence, useInView, useMotionValue, useSpring, useTransform } from 'framer-motion';
 import { useRef, useState } from 'react';
 import { Sparkles } from 'lucide-react';
 
@@ -142,13 +142,52 @@ const CTASection = ({ onOpenContact }: CTASectionProps) => {
       <motion.div 
         className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 pointer-events-none"
         style={{
-          width: 600,
-          height: 600,
+          width: 800,
+          height: 800,
           x: glowX,
           y: glowY,
-          background: `radial-gradient(circle, hsla(199, 89%, 48%, 0.3) 0%, transparent 60%)`,
+          background: `radial-gradient(circle, hsla(199, 89%, 48%, ${isHovered ? 0.4 : 0.25}) 0%, transparent 70%)`,
+          filter: `blur(${isHovered ? 60 : 40}px)`,
         }}
       />
+
+      {/* Warp Speed Lines - appears on hover */}
+      <div className="absolute inset-0 pointer-events-none overflow-hidden">
+        <AnimatePresence>
+          {isHovered && (
+            <motion.div
+              initial={{ opacity: 0 }}
+              animate={{ opacity: 1 }}
+              exit={{ opacity: 0 }}
+              className="absolute inset-0"
+            >
+              {[...Array(15)].map((_, i) => (
+                <motion.div
+                  key={i}
+                  className="absolute bg-primary/20"
+                  style={{
+                    height: '2px',
+                    width: Math.random() * 100 + 50,
+                    left: `${Math.random() * 100}%`,
+                    top: `${Math.random() * 100}%`,
+                    rotate: `${(Math.random() - 0.5) * 10}deg`,
+                  }}
+                  animate={{
+                    x: [0, 1000 * (Math.random() > 0.5 ? 1 : -1)],
+                    opacity: [0, 0.8, 0],
+                  }}
+                  transition={{
+                    duration: Math.random() * 0.5 + 0.5,
+                    repeat: Infinity,
+                    ease: "linear",
+                    delay: Math.random() * 2,
+                  }}
+                />
+              ))}
+            </motion.div>
+          )}
+        </AnimatePresence>
+      </div>
 
       <div ref={containerRef} className="container mx-auto px-6 relative">
         <motion.div
@@ -158,44 +197,57 @@ const CTASection = ({ onOpenContact }: CTASectionProps) => {
           className="max-w-3xl mx-auto text-center"
         >
           {/* Energy core icon */}
-          <motion.div
-            initial={{ scale: 0, rotate: -180 }}
-            animate={isInView ? { scale: 1, rotate: 0 } : {}}
-            transition={{ duration: 0.8, delay: 0.2, type: 'spring', bounce: 0.4 }}
-            className="w-20 h-20 rounded-full flex items-center justify-center mx-auto mb-8 relative"
-            style={{
-              background: 'linear-gradient(135deg, hsla(199, 89%, 48%, 0.1), hsla(263, 70%, 50%, 0.05))',
-              border: '1px solid hsla(199, 89%, 48%, 0.2)',
-            }}
-            onMouseEnter={() => setIsHovered(true)}
-            onMouseLeave={() => setIsHovered(false)}
-          >
             <motion.div
-              className="w-10 h-10 rounded-full bg-primary flex items-center justify-center relative"
-              animate={{ 
-                boxShadow: isHovered 
-                  ? ['0 0 60px hsla(199, 89%, 48%, 0.6)', '0 0 100px hsla(199, 89%, 48%, 0.8)', '0 0 60px hsla(199, 89%, 48%, 0.6)']
-                  : ['0 0 30px hsla(199, 89%, 48%, 0.3)', '0 0 50px hsla(199, 89%, 48%, 0.5)', '0 0 30px hsla(199, 89%, 48%, 0.3)'],
-              }}
-              transition={{ duration: isHovered ? 1 : 2, repeat: Infinity, ease: 'easeInOut' }}
-            >
-              <Sparkles className="w-5 h-5 text-primary-foreground" />
-            </motion.div>
-            
-            {/* Orbiting particle around the outer ring */}
-            <motion.div
-              className="absolute w-2 h-2 rounded-full bg-star-glow"
-              animate={{ rotate: 360 }}
-              transition={{ duration: 3, repeat: Infinity, ease: 'linear' }}
+              className="w-20 h-20 rounded-full flex items-center justify-center mx-auto mb-8 relative"
               style={{
-                top: 0,
-                left: '50%',
-                marginLeft: -4, // Half of particle width to center it
-                transformOrigin: '4px 40px', // Center of particle (4px) to center of container (40px = half of 80px)
-                boxShadow: '0 0 10px hsla(199, 89%, 65%, 0.6)',
+                background: 'linear-gradient(135deg, hsla(199, 89%, 48%, 0.15), hsla(263, 70%, 50%, 0.1))',
+                border: '1px solid hsla(199, 89%, 48%, 0.3)',
+                boxShadow: isHovered ? '0 0 50px hsla(199, 89%, 48%, 0.2)' : 'none',
               }}
-            />
-          </motion.div>
+              onMouseEnter={() => setIsHovered(true)}
+              onMouseLeave={() => setIsHovered(false)}
+            >
+              <motion.div
+                className="w-10 h-10 rounded-full bg-primary flex items-center justify-center relative z-20"
+                animate={{ 
+                  scale: isHovered ? [1, 1.3, 1] : [1, 1.1, 1],
+                  boxShadow: isHovered 
+                    ? ['0 0 60px hsla(199, 89%, 48%, 0.7)', '0 0 120px hsla(199, 89%, 48%, 0.9)', '0 0 60px hsla(199, 89%, 48%, 0.7)']
+                    : ['0 0 30px hsla(199, 89%, 48%, 0.4)', '0 0 60px hsla(199, 89%, 48%, 0.6)', '0 0 30px hsla(199, 89%, 48%, 0.4)'],
+                }}
+                transition={{ duration: isHovered ? 0.8 : 2, repeat: Infinity, ease: 'easeInOut' }}
+              >
+                <Sparkles className="w-5 h-5 text-primary-foreground" />
+              </motion.div>
+              
+              {/* Refined energy pulse ring */}
+              <motion.div
+                className="absolute inset-0 rounded-full border border-primary/40 pointer-events-none"
+                animate={{
+                  scale: [1, 1.8],
+                  opacity: [0.6, 0],
+                }}
+                transition={{
+                  duration: isHovered ? 1 : 2,
+                  repeat: Infinity,
+                  ease: "easeOut",
+                }}
+              />
+              
+              {/* Orbiting particle around the outer ring */}
+              <motion.div
+                className="absolute w-2 h-2 rounded-full bg-star-glow z-10"
+                animate={{ rotate: 360 }}
+                transition={{ duration: 3, repeat: Infinity, ease: 'linear' }}
+                style={{
+                  top: 0,
+                  left: '50%',
+                  marginLeft: -4, 
+                  transformOrigin: '4px 40px', 
+                  boxShadow: '0 0 12px hsla(199, 89%, 65%, 0.8)',
+                }}
+              />
+            </motion.div>
 
           <motion.h2 
             className="font-display text-4xl md:text-5xl lg:text-6xl font-bold mb-6"
