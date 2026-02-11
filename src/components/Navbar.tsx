@@ -195,13 +195,25 @@ const Navbar = ({ onOpenContact }: NavbarProps) => {
                   {isActive && (
                     <motion.div
                       layoutId="active-nav-pill"
-                      className="absolute inset-0 bg-secondary rounded-full"
+                      className="absolute inset-0 bg-secondary rounded-full overflow-hidden"
                       style={{
                         boxShadow: '0 0 20px hsla(199, 89%, 48%, 0.15)',
                         border: '1px solid hsla(199, 89%, 48%, 0.2)',
                       }}
                       transition={{ type: 'spring', bounce: 0.2, duration: 0.6 }}
-                    />
+                    >
+                      <motion.div
+                        className="absolute inset-0 bg-gradient-to-r from-transparent via-white/20 to-transparent w-1/2 -skew-x-12"
+                        initial={{ x: '-150%' }}
+                        animate={{ x: '250%' }}
+                        transition={{
+                          repeat: Infinity,
+                          duration: 3,
+                          ease: "easeInOut",
+                          repeatDelay: 2
+                        }}
+                      />
+                    </motion.div>
                   )}
                   <span className="relative z-10">{link.label}</span>
                   

@@ -15,6 +15,7 @@ interface Star {
   layer: number; // 0 = far, 1 = mid, 2 = near
   twinkleSpeed: number;
   twinkleOffset: number;
+  color: string;
 }
 
 const StarField = ({ mouseX, mouseY }: StarFieldProps) => {
@@ -57,16 +58,24 @@ const StarField = ({ mouseX, mouseY }: StarFieldProps) => {
       }
     };
 
-    const createStar = (layer: number, config: typeof starLayers.far): Star => ({
-      x: Math.random() * canvas.width,
-      y: Math.random() * canvas.height,
-      size: config.sizeRange[0] + Math.random() * (config.sizeRange[1] - config.sizeRange[0]),
-      opacity: 0.3 + Math.random() * 0.7,
-      speed: config.speedMultiplier + Math.random() * config.speedMultiplier,
-      layer,
-      twinkleSpeed: 0.5 + Math.random() * 2,
-      twinkleOffset: Math.random() * Math.PI * 2,
-    });
+    const createStar = (layer: number, config: typeof starLayers.far): Star => {
+      const colorType = Math.random();
+      let hue = 199; // Default Cyan
+      if (colorType > 0.9) hue = 263; // Purple
+      else if (colorType > 0.95) hue = 30; // Orange-ish
+      
+      return {
+        x: Math.random() * canvas.width,
+        y: Math.random() * canvas.height,
+        size: config.sizeRange[0] + Math.random() * (config.sizeRange[1] - config.sizeRange[0]),
+        opacity: 0.3 + Math.random() * 0.7,
+        speed: config.speedMultiplier + Math.random() * config.speedMultiplier,
+        layer,
+        twinkleSpeed: 0.5 + Math.random() * 2,
+        twinkleOffset: Math.random() * Math.PI * 2,
+        color: `${hue}, 89%`,
+      };
+    };
 
     resizeCanvas();
     window.addEventListener('resize', resizeCanvas);
@@ -79,6 +88,22 @@ const StarField = ({ mouseX, mouseY }: StarFieldProps) => {
       lastTime = currentTime;
 
       ctx.clearRect(0, 0, canvas.width, canvas.height);
+
+      // Nebula Effect
+      const time = currentTime * 0.0002;
+      const nebulaGradient = ctx.createRadialGradient(
+        canvas.width * 0.5 + Math.sin(time) * 300,
+        canvas.height * 0.5 + Math.cos(time * 0.8) * 200,
+        0,
+        canvas.width * 0.5,
+        canvas.height * 0.5,
+        canvas.width * 0.8
+      );
+      nebulaGradient.addColorStop(0, 'hsla(263, 70%, 50%, 0.03)'); // Purple core
+      nebulaGradient.addColorStop(0.4, 'hsla(199, 89%, 48%, 0.02)'); // Blue mid
+      nebulaGradient.addColorStop(1, 'transparent');
+      ctx.fillStyle = nebulaGradient;
+      ctx.fillRect(0, 0, canvas.width, canvas.height);
 
       const parallaxFactors = [
         starLayers.far.parallaxFactor,
@@ -99,35 +124,32 @@ const StarField = ({ mouseX, mouseY }: StarFieldProps) => {
         // Draw position with parallax
         const drawX = star.x + offsetX;
         const drawY = star.y + offsetY;
-
-        // Draw star core
-        const hue = 199 + star.layer * 5; // Blue-cyan range
-        const lightness = 60 + star.layer * 10;
         
         ctx.beginPath();
         ctx.arc(drawX, drawY, star.size, 0, Math.PI * 2);
-        ctx.fillStyle = `hsla(${hue}, 89%, ${lightness}%, ${currentOpacity})`;
+        // Use stored color
+        const lightness = 60 + star.layer * 10;
+        ctx.fillStyle = `hsla(${star.color}, ${lightness}%, ${currentOpacity})`;
         ctx.fill();
 
         // Add glow for larger/closer stars
         if (star.size > 1 && star.layer >= 1) {
           const gradient = ctx.createRadialGradient(
             drawX, drawY, 0,
-            drawX, drawY, star.size * 4
+            drawX, drawY, star.size * 3
           );
-          gradient.addColorStop(0, `hsla(${hue}, 89%, 70%, ${currentOpacity * 0.4})`);
-          gradient.addColorStop(0.5, `hsla(${hue}, 89%, 60%, ${currentOpacity * 0.1})`);
+          gradient.addColorStop(0, `hsla(${star.color}, 70%, ${currentOpacity * 0.3})`);
           gradient.addColorStop(1, 'transparent');
-          ctx.beginPath();
-          ctx.arc(drawX, drawY, star.size * 4, 0, Math.PI * 2);
           ctx.fillStyle = gradient;
+          ctx.beginPath();
+          ctx.arc(drawX, drawY, star.size * 3, 0, Math.PI * 2);
           ctx.fill();
         }
 
         // Slow drift
         const driftSpeed = star.speed * deltaTime * 30;
         star.y += driftSpeed;
-        star.x += star.speed * deltaTime * 5;
+        star.x += star.speed * deltaTime * 2;
 
         // Wrap around
         if (star.y > canvas.height + 100) {
@@ -140,7 +162,7 @@ const StarField = ({ mouseX, mouseY }: StarFieldProps) => {
       });
 
       // Add occasional shooting star
-      if (Math.random() < 0.001) {
+      if (Math.random() < 0.002) {
         drawShootingStar(ctx, canvas.width, canvas.height);
       }
 
@@ -150,15 +172,23 @@ const StarField = ({ mouseX, mouseY }: StarFieldProps) => {
     const drawShootingStar = (ctx: CanvasRenderingContext2D, width: number, height: number) => {
       const startX = Math.random() * width;
       const startY = Math.random() * height * 0.5;
-      const length = 100 + Math.random() * 200;
-      const angle = Math.PI / 4 + Math.random() * 0.2;
+      const length = 150 + Math.random() * 300;
+      const angle = Math.PI / 4 + (Math.random() * 0.2 - 0.1);
+      const speed = 2 + Math.random() * 3;
 
+      // Create a temporary shooting star object to animate (optional, efficiently just draw one frame for now)
+      // For simple effect without managing state, we just draw a static streak that fades? 
+      // No, strictly drawing once per frame implies it will flicker.
+      // To properly animate shooting stars, we need state. 
+      // For now, let's keep the simple "streak" effect but make it nicer.
+      
       const gradient = ctx.createLinearGradient(
         startX, startY,
         startX + Math.cos(angle) * length,
         startY + Math.sin(angle) * length
       );
-      gradient.addColorStop(0, 'hsla(199, 89%, 85%, 0.9)');
+      gradient.addColorStop(0, 'hsla(199, 89%, 90%, 0.8)');
+      gradient.addColorStop(0.1, 'hsla(199, 89%, 70%, 0.5)');
       gradient.addColorStop(1, 'transparent');
 
       ctx.beginPath();
@@ -166,7 +196,17 @@ const StarField = ({ mouseX, mouseY }: StarFieldProps) => {
       ctx.lineTo(startX + Math.cos(angle) * length, startY + Math.sin(angle) * length);
       ctx.strokeStyle = gradient;
       ctx.lineWidth = 2;
+      ctx.lineCap = 'round';
       ctx.stroke();
+      
+      // Head glow
+      ctx.beginPath();
+      ctx.arc(startX, startY, 3, 0, Math.PI * 2);
+      ctx.fillStyle = 'white';
+      ctx.shadowColor = 'cyan';
+      ctx.shadowBlur = 10;
+      ctx.fill();
+      ctx.shadowBlur = 0;
     };
 
     animate(performance.now());
