@@ -1,9 +1,10 @@
-import { useMotionValue, useSpring } from 'framer-motion';
+import { useMotionValue, useSpring, motion } from 'framer-motion';
 import { useEffect, useState } from 'react';
-import StarField from '@/components/StarField';
+import CosmicBackground from '@/components/CosmicBackground';
 import Navbar from '@/components/Navbar';
 import HeroSection from '@/components/HeroSection';
 import ServicesSection from '@/components/ServicesSection';
+import Marquee from '@/components/Marquee';
 import ProjectsSection from '@/components/ProjectsSection';
 import ProcessSection from '@/components/ProcessSection';
 import AboutSection from '@/components/AboutSection';
@@ -12,84 +13,46 @@ import CTASection from '@/components/CTASection';
 import Footer from '@/components/Footer';
 import ScrollToTop from '@/components/ScrollToTop';
 import ContactModal from '@/components/ContactModal';
-import CursorTrail from '@/components/CursorTrail';
 import ScrollProgress from '@/components/ScrollProgress';
-import StatsSection from '@/components/StatsSection';
-import FloatingElements from '@/components/FloatingElements';
-import LoadingScreen from '@/components/LoadingScreen';
 
 const Index = () => {
-  // Mouse parallax motion values lifted to top level for continuity
   const mouseX = useSpring(useMotionValue(0), { stiffness: 50, damping: 20 });
   const mouseY = useSpring(useMotionValue(0), { stiffness: 50, damping: 20 });
-
   const [isContactOpen, setIsContactOpen] = useState(false);
 
   useEffect(() => {
     const handleMouseMove = (e: MouseEvent) => {
-      const x = (e.clientX / window.innerWidth - 0.5) * 2;
-      const y = (e.clientY / window.innerHeight - 0.5) * 2;
-      mouseX.set(x);
-      mouseY.set(y);
+      mouseX.set((e.clientX / window.innerWidth - 0.5) * 2);
+      mouseY.set((e.clientY / window.innerHeight - 0.5) * 2);
     };
-
     window.addEventListener('mousemove', handleMouseMove);
     return () => window.removeEventListener('mousemove', handleMouseMove);
   }, [mouseX, mouseY]);
 
   return (
-    <div className="min-h-screen bg-background text-foreground overflow-x-hidden">
-      {/* Loading Screen Overlay */}
-      <LoadingScreen />
-
-      {/* Floating Background Elements */}
-      <FloatingElements />
-      
-      {/* Cursor Trail Effect */}
-      <CursorTrail />
-      
-      {/* Star Field Background - Lifted for continuity */}
-      <StarField mouseX={mouseX} mouseY={mouseY} />
-      
-      {/* Navbar */}
+    <motion.div
+      initial={{ opacity: 0 }}
+      animate={{ opacity: 1 }}
+      transition={{ duration: 0.4 }}
+      className="relative min-h-screen text-foreground overflow-x-hidden"
+    >
+      <CosmicBackground />
       <Navbar onOpenContact={() => setIsContactOpen(true)} />
-      
-      {/* Hero Section - Accepts motion values for synchronized parallax */}
+
       <HeroSection mouseX={mouseX} mouseY={mouseY} onOpenContact={() => setIsContactOpen(true)} />
-      
-      {/* Services Section */}
       <ServicesSection />
-
-      {/* Process Section */}
-      <ProcessSection />
-      
-      {/* Stats Section */}
-      <StatsSection />
-      
-      {/* Projects Section */}
+      <Marquee />
       <ProjectsSection />
-      
-      {/* About Section */}
+      <ProcessSection />
       <AboutSection />
-      
-      {/* Testimonials Section */}
       <TestimonialsSection />
-      
-      {/* CTA Section */}
       <CTASection onOpenContact={() => setIsContactOpen(true)} />
-      
-      {/* Footer */}
       <Footer />
-      
-      {/* Scroll to Top Navigation */}
-      <ScrollToTop />
-      
-      {/* Scroll Progress Indicator */}
-      <ScrollProgress />
 
-      {/* Contact Modal */}
+      <ScrollToTop />
+      <ScrollProgress />
       <ContactModal isOpen={isContactOpen} onClose={() => setIsContactOpen(false)} />
-    </div>
+    </motion.div>
   );
 };
 

@@ -1,170 +1,81 @@
 import { motion, useInView } from 'framer-motion';
 import { useRef } from 'react';
 import { Star } from 'lucide-react';
-import { Meteors } from './ui/meteors';
 
 const testimonials = [
   {
     id: 1,
-    content: "Celestial Motion Labs transformed our digital presence entirely. Their attention to detail and innovative approach exceeded every expectation we had.",
-    author: "Sarah Chen",
-    role: "CEO, TechNova",
+    content: 'OrbitX Labs transformed our digital presence entirely. Their attention to detail and innovative approach exceeded every expectation.',
+    author: 'Sarah Chen',
+    role: 'CEO, TechNova',
   },
   {
     id: 2,
-    content: "Working with this team felt like having an extension of our own company. They truly understood our vision and brought it to life.",
-    author: "Marcus Thompson",
-    role: "Founder, Quantumleap",
+    content: 'Working with this team felt like having an extension of our own company. They understood our vision and brought it to life.',
+    author: 'Marcus Thompson',
+    role: 'Founder, Quantumleap',
   },
   {
     id: 3,
-    content: "The results speak for themselves—a 300% increase in user engagement and a brand identity that sets us apart in our industry.",
-    author: "Elena Rodriguez",
-    role: "CMO, Stellar Health",
+    content: 'The results speak for themselves — a 300% increase in user engagement and a brand identity that sets us apart in our industry.',
+    author: 'Elena Rodriguez',
+    role: 'CMO, Stellar Health',
   },
 ];
 
 const TestimonialsSection = () => {
-  const containerRef = useRef<HTMLDivElement>(null);
-  const isInView = useInView(containerRef, { once: true, margin: '-100px' });
-
-  const containerVariants = {
-    hidden: {},
-    visible: {
-      transition: {
-        staggerChildren: 0.15,
-        delayChildren: 0.2,
-      },
-    },
-  };
-
-  const cardVariants = {
-    hidden: { 
-      opacity: 0, 
-      y: 50,
-      rotateY: -10,
-    },
-    visible: { 
-      opacity: 1, 
-      y: 0,
-      rotateY: 0,
-      transition: {
-        type: 'spring',
-        stiffness: 100,
-        damping: 15,
-      },
-    },
-  };
+  const ref = useRef<HTMLDivElement>(null);
+  const inView = useInView(ref, { once: true, margin: '-100px' });
 
   return (
-    <section className="relative py-32 overflow-hidden">
-      <div className="absolute inset-0 pointer-events-none">
-        <Meteors number={20} />
-      </div>
-      <div ref={containerRef} className="container mx-auto px-6">
+    <section className="relative py-28 md:py-36">
+      <div ref={ref} className="container mx-auto px-6">
         <motion.div
-          initial={{ opacity: 0, y: 40 }}
-          animate={isInView ? { opacity: 1, y: 0 } : {}}
-          transition={{ duration: 0.8 }}
-          className="text-center mb-16"
+          initial={{ opacity: 0, y: 20 }}
+          animate={inView ? { opacity: 1, y: 0 } : {}}
+          transition={{ duration: 0.6 }}
+          className="text-center max-w-2xl mx-auto mb-16"
         >
-          <motion.span 
-            className="inline-block px-4 py-1.5 rounded-full text-sm font-medium bg-primary/10 text-primary border border-primary/20 mb-6"
-            initial={{ opacity: 0, scale: 0.8 }}
-            animate={isInView ? { opacity: 1, scale: 1 } : {}}
-            transition={{ duration: 0.5, delay: 0.1 }}
-          >
-            Testimonials
-          </motion.span>
-          <motion.h2 
-            className="font-display text-4xl md:text-5xl font-bold"
-            initial={{ opacity: 0, y: 20 }}
-            animate={isInView ? { opacity: 1, y: 0 } : {}}
-            transition={{ duration: 0.8, delay: 0.2 }}
-          >
-            Trusted by <span className="text-gradient-cosmic">Industry Leaders</span>
-          </motion.h2>
+          <span className="font-mono text-xs uppercase tracking-[0.3em] text-brand-violet">— Testimonials</span>
+          <h2 className="font-display text-4xl md:text-5xl font-bold mt-4">
+            Trusted by <span className="text-gradient-brand">Industry Leaders</span>
+          </h2>
         </motion.div>
 
-        <motion.div 
-          className="grid md:grid-cols-3 gap-6"
-          variants={containerVariants}
+        <motion.div
+          variants={{ visible: { transition: { staggerChildren: 0.1 } } }}
           initial="hidden"
-          animate={isInView ? "visible" : "hidden"}
+          animate={inView ? 'visible' : 'hidden'}
+          className="grid md:grid-cols-3 gap-6"
         >
-          {testimonials.map((testimonial, index) => (
-            <motion.div
-              key={testimonial.id}
-              variants={cardVariants}
-              className="glass-card rounded-2xl p-8 relative group"
-              whileHover={{ 
-                y: -8,
-                transition: { duration: 0.3 },
+          {testimonials.map((t) => (
+            <motion.article
+              key={t.id}
+              variants={{
+                hidden: { opacity: 0, y: 30 },
+                visible: { opacity: 1, y: 0, transition: { duration: 0.6, ease: [0.16, 1, 0.3, 1] } },
               }}
+              whileHover={{ y: -8 }}
+              className="glass-card p-8 flex flex-col transition-shadow hover:shadow-[0_0_30px_rgba(124,58,237,0.2)]"
             >
-              {/* Floating animation */}
-              <motion.div
-                className="absolute inset-0 pointer-events-none"
-                animate={{ 
-                  y: [0, -8, 0],
-                }}
-                transition={{ 
-                  duration: 4 + index, 
-                  repeat: Infinity, 
-                  ease: 'easeInOut',
-                  delay: index * 0.5,
-                }}
-              />
-
-              {/* Stars */}
-              <motion.div 
-                className="flex gap-1 mb-6"
-                initial={{ opacity: 0 }}
-                animate={isInView ? { opacity: 1 } : {}}
-                transition={{ delay: 0.3 + index * 0.1 }}
-              >
-                {[...Array(5)].map((_, i) => (
-                  <motion.div
-                    key={i}
-                    initial={{ opacity: 0, scale: 0, rotate: -180 }}
-                    animate={isInView ? { opacity: 1, scale: 1, rotate: 0 } : {}}
-                    transition={{ delay: 0.4 + index * 0.1 + i * 0.05, type: 'spring' }}
-                  >
-                    <Star className="w-4 h-4 fill-primary text-primary" />
-                  </motion.div>
+              <div className="flex gap-1 mb-5">
+                {Array.from({ length: 5 }).map((_, i) => (
+                  <Star key={i} className="w-4 h-4 fill-brand-amber text-brand-amber" />
                 ))}
-              </motion.div>
-
-              {/* Content */}
-              <p className="text-foreground leading-relaxed mb-8 relative">
-                "{testimonial.content}"
-              </p>
-
-              {/* Author */}
-              <div className="flex items-center gap-4 relative">
-                <div 
-                  className="w-12 h-12 rounded-full flex items-center justify-center text-primary font-bold text-lg"
-                  style={{
-                    background: 'hsla(199, 89%, 48%, 0.1)',
-                    border: '2px solid hsla(199, 89%, 48%, 0.3)',
-                  }}
-                >
-                  {testimonial.author.charAt(0)}
+              </div>
+              <p className="text-foreground/90 italic leading-relaxed mb-8 flex-1">"{t.content}"</p>
+              <div className="flex items-center gap-4">
+                <div className="relative w-12 h-12 rounded-full p-[2px] gradient-brand">
+                  <div className="w-full h-full rounded-full bg-card grid place-items-center font-display font-bold text-foreground">
+                    {t.author.charAt(0)}
+                  </div>
                 </div>
                 <div>
-                  <div className="font-semibold text-foreground">{testimonial.author}</div>
-                  <div className="text-sm text-muted-foreground">{testimonial.role}</div>
+                  <div className="font-display font-bold text-foreground">{t.author}</div>
+                  <div className="text-sm text-muted-foreground">{t.role}</div>
                 </div>
               </div>
-
-              {/* Hover border glow */}
-              <motion.div
-                className="absolute inset-0 rounded-2xl opacity-0 group-hover:opacity-100 transition-opacity duration-300 pointer-events-none"
-                style={{
-                  border: '1px solid hsla(199, 89%, 48%, 0.3)',
-                }}
-              />
-            </motion.div>
+            </motion.article>
           ))}
         </motion.div>
       </div>
