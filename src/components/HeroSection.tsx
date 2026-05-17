@@ -22,11 +22,11 @@ const trustLogos = ['NORTHWIND', 'ACME', 'STELLAR', 'QUANTUM', 'HELIX', 'NOVA'];
 const HeroSection = ({ onOpenContact }: HeroSectionProps) => {
   const globeConfig = useMemo(() => ({
     pointSize: 4,
-    globeColor: '#0B0B17',
+    globeColor: '#0F0F22',
     showAtmosphere: true,
     atmosphereColor: '#7C3AED',
     atmosphereAltitude: 0.14,
-    emissive: '#0B0B17',
+    emissive: '#0F0F22',
     emissiveIntensity: 0.1,
     shininess: 0.9,
     polygonColor: 'rgba(255,255,255,0.55)',
@@ -118,7 +118,7 @@ const HeroSection = ({ onOpenContact }: HeroSectionProps) => {
           </motion.div>
 
           {/* Headline — split-line reveal, tight clamp */}
-          <h1 className="font-display font-extrabold tracking-[-0.035em] leading-[0.95] mb-8 text-[clamp(2.5rem,7.5vw,5.75rem)]">
+          <h1 className="font-display font-extrabold tracking-[-0.035em] leading-[0.95] mb-8 text-[clamp(2.25rem,5.6vw,4.5rem)]">
             <Line i={0}>We Build Digital</Line>
             <Line i={1} className="text-gradient-brand pr-2">Experiences That</Line>
             <Line i={2}>
