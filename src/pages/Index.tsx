@@ -14,6 +14,7 @@ import Footer from '@/components/Footer';
 import ScrollToTop from '@/components/ScrollToTop';
 import ContactModal from '@/components/ContactModal';
 import ScrollProgress from '@/components/ScrollProgress';
+import CustomCursor from '@/components/CustomCursor';
 
 const Index = () => {
   const mouseX = useSpring(useMotionValue(0), { stiffness: 50, damping: 20 });
@@ -37,6 +38,7 @@ const Index = () => {
       className="relative min-h-screen text-foreground overflow-x-hidden"
     >
       <CosmicBackground />
+      <CustomCursor />
       <Navbar onOpenContact={() => setIsContactOpen(true)} />
 
       <HeroSection mouseX={mouseX} mouseY={mouseY} onOpenContact={() => setIsContactOpen(true)} />
